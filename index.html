@@ -218,7 +218,7 @@
       gap:8px;
     }
 
-    .primary,.secondary,.danger,.send-btn,.small-btn{
+    .primary,.secondary,.danger,.send-btn,.small-btn,.icon-btn{
       border:none;
       cursor:pointer;
       border-radius:16px;
@@ -243,6 +243,12 @@
       color:#ffb1b1;
       border:1px solid rgba(255,98,98,.22);
       padding:12px 14px;
+    }
+
+    .icon-btn{
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      padding:10px 12px;
     }
 
     .chat-search{
@@ -352,8 +358,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      background:
-        radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+      background:radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
       background-size:20px 20px;
       -webkit-overflow-scrolling:touch;
     }
@@ -565,13 +570,45 @@
       background:transparent;
     }
 
+    .mobile-back{
+      display:none;
+    }
+
     @media (max-width:900px){
       .app{
-        grid-template-columns:128px 1fr;
+        grid-template-columns:1fr;
       }
 
-      .sidebar,.main{
-        display:flex !important;
+      .sidebar{
+        position:fixed;
+        left:0;
+        top:0;
+        bottom:0;
+        width:100%;
+        z-index:20;
+        border-right:none;
+      }
+
+      .main{
+        position:fixed;
+        left:0;
+        top:0;
+        bottom:0;
+        width:100%;
+        z-index:21;
+        background:
+          radial-gradient(circle at top left, rgba(18,211,166,.18), transparent 22%),
+          radial-gradient(circle at top right, rgba(42,167,255,.18), transparent 22%),
+          linear-gradient(180deg,#07111a,#0a1520 40%, #09131d);
+        display:none;
+      }
+
+      .main.mobile-active{
+        display:flex;
+      }
+
+      .sidebar.mobile-hidden{
+        display:none;
       }
 
       .topbar{
@@ -600,8 +637,7 @@
       }
 
       .profile-card,.action-card{
-        padding:10px;
-        border-radius:18px;
+        display:none;
       }
 
       .row{
@@ -618,28 +654,28 @@
       }
 
       .chat-item{
-        padding:10px 8px;
-        gap:8px;
-        flex-direction:column;
-        align-items:flex-start;
+        padding:12px 10px;
+        gap:10px;
+        flex-direction:row;
+        align-items:center;
       }
 
       .chat-item .avatar{
-        width:36px;
-        height:36px;
-        font-size:12px;
+        width:42px;
+        height:42px;
+        font-size:13px;
       }
 
       .chat-item .text h4{
-        font-size:12px;
+        font-size:14px;
       }
 
       .chat-item .text p{
-        display:none;
+        display:block;
       }
 
       .chat-item .time{
-        font-size:10px;
+        font-size:11px;
       }
 
       .messages{
@@ -678,13 +714,13 @@
       .tabu-word{
         font-size:28px;
       }
+
+      .mobile-back{
+        display:inline-flex;
+      }
     }
 
     @media (max-width:650px){
-      .app{
-        grid-template-columns:112px 1fr;
-      }
-
       .logo,.avatar{
         width:34px;
         height:34px;
@@ -695,19 +731,23 @@
         font-size:15px;
       }
 
-      .chat-top,.top{
+      .chat-top,.topbar{
         padding:8px;
       }
 
       .meta p{
         display:none;
       }
+
+      .chat-item{
+        padding:10px 8px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
       <div class="sidebar-head">
         <div class="profile-card">
           <div class="me-row">
@@ -738,8 +778,9 @@
       <div id="chatList" class="chat-list"></div>
     </aside>
 
-    <main class="main">
+    <main id="main" class="main">
       <div class="topbar">
+        <button id="mobileBackTabsBtn" class="icon-btn mobile-back">←</button>
         <div class="brand">
           <div class="logo">P</div>
           <div class="brand-text">
@@ -760,11 +801,12 @@
         <div class="chat-panel">
           <div id="emptyChat" class="empty">
             <h2>PixelRoom hazır</h2>
-            <p>Soldan profilini kaydet, sonra bir arkadaş kullanıcı adı ile sohbet aç.</p>
+            <p>Soldan bir sohbete dokun ya da masaüstünde normal kullan.</p>
           </div>
 
           <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
             <div class="chat-top">
+              <button id="mobileBackChatBtn" class="icon-btn mobile-back">←</button>
               <div id="chatAvatar" class="avatar">?</div>
               <div class="meta">
                 <h3 id="chatName">Sohbet</h3>
@@ -801,7 +843,7 @@
             <div class="card-big">
               <h3>Nasıl Oynanır?</h3>
               <p>Bir kişi karttaki ana kelimeyi anlatır. Takım arkadaşı tahmin eder. Yasaklı kelimeleri söylersen tur bozulur.</p>
-              <p>Süre tutmak için telefonun kronometresini açabilirsin. İstersen bunu sonra kodla süreli hale de getiririm.</p>
+              <p>Süre tutmak için telefonun kronometresini açabilirsin.</p>
             </div>
           </div>
         </div>
@@ -840,6 +882,8 @@
 
     const $ = id => document.getElementById(id);
     const els = {
+      sidebar: $("sidebar"),
+      main: $("main"),
       meAvatar: $("meAvatar"),
       meName: $("meName"),
       meSub: $("meSub"),
@@ -865,7 +909,9 @@
       tabuWord: $("tabuWord"),
       forbiddenList: $("forbiddenList"),
       nextTabuBtn: $("nextTabuBtn"),
-      filmGrid: $("filmGrid")
+      filmGrid: $("filmGrid"),
+      mobileBackChatBtn: $("mobileBackChatBtn"),
+      mobileBackTabsBtn: $("mobileBackTabsBtn")
     };
 
     let me = null;
@@ -899,6 +945,22 @@
       { title:"The Super Mario Bros. Movie", type:"Animasyon / Macera", year:"2023", desc:"Renkli, hızlı ve oyun sevenler için baya keyifli." },
       { title:"Guardians of the Galaxy", type:"Bilim Kurgu / Macera", year:"2014", desc:"Ekip, mizah ve aksiyon seviyorsan iyi gider." }
     ];
+
+    function isMobile(){
+      return window.innerWidth <= 900;
+    }
+
+    function showMobileList(){
+      if(!isMobile()) return;
+      els.sidebar.classList.remove("mobile-hidden");
+      els.main.classList.remove("mobile-active");
+    }
+
+    function showMobileMain(){
+      if(!isMobile()) return;
+      els.sidebar.classList.add("mobile-hidden");
+      els.main.classList.add("mobile-active");
+    }
 
     function esc(str=""){
       return str
@@ -953,6 +1015,10 @@
       if(tabName === "chat") $("chatSection").classList.add("active");
       if(tabName === "tabu") $("tabuSection").classList.add("active");
       if(tabName === "film") $("filmSection").classList.add("active");
+
+      if(isMobile()){
+        showMobileMain();
+      }
     }
 
     function renderFilms(){
@@ -1194,7 +1260,6 @@
       els.newChatInput.value = "";
       await loadChats();
       openChat(chatId, targetProfile);
-      switchTab("chat");
     }
 
     async function loadChats(){
@@ -1252,7 +1317,6 @@
           if(!profileSnap.exists()) return;
 
           openChat(item.dataset.chat, profileSnap.val());
-          switchTab("chat");
         };
       });
     }
@@ -1285,6 +1349,12 @@
       els.presenceBadge.textContent = "offline";
       els.typingText.textContent = "";
       els.messages.innerHTML = "";
+
+      if(isMobile()){
+        switchTab("chat");
+      } else {
+        els.main.classList.add("mobile-active");
+      }
 
       currentPresenceRef = ref(db, `presence/${peerProfile.uid}`);
       onValue(currentPresenceRef, snap => {
@@ -1354,6 +1424,8 @@
       onValue(currentChatMetaRef, async () => {
         await loadChats();
       });
+
+      showMobileMain();
     }
 
     async function setTyping(){
@@ -1423,7 +1495,18 @@
     };
 
     els.logoutBtn.onclick = logOut;
-    els.nextTabuBtn.onclick = randomTabu;
+    els.nextTabuBtn.onclick = () => {
+      switchTab("tabu");
+      randomTabu();
+    };
+
+    els.mobileBackChatBtn.onclick = () => {
+      showMobileList();
+    };
+
+    els.mobileBackTabsBtn.onclick = () => {
+      showMobileList();
+    };
 
     els.messageInput.addEventListener("input", () => {
       autoGrow();
@@ -1449,6 +1532,13 @@
       }
     });
 
+    window.addEventListener("resize", () => {
+      if(!isMobile()){
+        els.sidebar.classList.remove("mobile-hidden");
+        els.main.classList.remove("mobile-active");
+      }
+    });
+
     (async function init(){
       try{
         renderFilms();
@@ -1459,6 +1549,10 @@
         await loadChats();
         updateHeader();
         await requestNotificationPermission();
+
+        if(isMobile()){
+          showMobileList();
+        }
       }catch(err){
         console.error(err);
         alert("Firebase bağlantısı kurulamadı. Anonymous Auth veya Realtime Database kapalı olabilir.");
