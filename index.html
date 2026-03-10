@@ -60,28 +60,125 @@
       flex-shrink:0;
     }
 
-    .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#00a884,#1f8fff);font-weight:800;color:#fff;flex-shrink:0}
+    .avatar{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#00a884,#1f8fff);
+      font-weight:800;
+      color:#fff;
+      flex-shrink:0
+    }
+
     .meta{min-width:0}
-    .meta h2,.meta h3{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .meta p{margin:3px 0 0;color:var(--soft);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .meta h2,.meta h3{
+      margin:0;
+      font-size:15px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+
+    .meta p{
+      margin:3px 0 0;
+      color:var(--soft);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+
     .spacer{flex:1}
 
-    .icon-btn,.send-btn,.primary,.secondary,.danger{border:none;cursor:pointer}
-    .icon-btn{background:transparent;color:var(--soft);font-size:18px;padding:8px;border-radius:10px}
+    .icon-btn,.send-btn,.primary,.secondary,.danger{
+      border:none;
+      cursor:pointer
+    }
+
+    .icon-btn{
+      background:transparent;
+      color:var(--soft);
+      font-size:18px;
+      padding:8px;
+      border-radius:10px
+    }
+
     .icon-btn:hover{background:rgba(255,255,255,.05)}
 
-    .card{padding:14px 14px 10px;border-bottom:1px solid var(--line)}
-    .label{font-size:12px;color:var(--soft);margin:0 0 8px;text-transform:uppercase;letter-spacing:.08em}
-    .input{width:100%;background:#1f2c34;border:1px solid transparent;color:var(--text);padding:13px 14px;border-radius:12px;outline:none;margin-bottom:10px}
-    .input:focus,.composer textarea:focus{border-color:#00a884}
-    .row{display:flex;gap:8px}
-    .primary{background:var(--accent);color:#fff;border-radius:12px;padding:12px 14px;font-weight:700;box-shadow:var(--shadow)}
-    .secondary{background:#1f2c34;color:var(--text);border-radius:12px;padding:12px 14px}
-    .danger{background:rgba(255,95,95,.12);color:#ff9f9f;border:1px solid rgba(255,95,95,.22);border-radius:12px;padding:12px 14px}
-    .primary:disabled,.secondary:disabled,.danger:disabled,.send-btn:disabled{opacity:.55;cursor:not-allowed}
+    .card{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line)
+    }
 
-    .search-wrap{padding:10px;border-bottom:1px solid var(--line);flex-shrink:0}
-    .search{width:100%;background:#202c33;border:none;color:var(--text);padding:12px 14px;border-radius:10px;outline:none}
+    .label{
+      font-size:12px;
+      color:var(--soft);
+      margin:0 0 8px;
+      text-transform:uppercase;
+      letter-spacing:.08em
+    }
+
+    .input{
+      width:100%;
+      background:#1f2c34;
+      border:1px solid transparent;
+      color:var(--text);
+      padding:13px 14px;
+      border-radius:12px;
+      outline:none;
+      margin-bottom:10px
+    }
+
+    .input:focus,.composer textarea:focus{border-color:#00a884}
+
+    .row{display:flex;gap:8px}
+
+    .primary{
+      background:var(--accent);
+      color:#fff;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:700;
+      box-shadow:var(--shadow)
+    }
+
+    .secondary{
+      background:#1f2c34;
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px
+    }
+
+    .danger{
+      background:rgba(255,95,95,.12);
+      color:#ff9f9f;
+      border:1px solid rgba(255,95,95,.22);
+      border-radius:12px;
+      padding:12px 14px
+    }
+
+    .primary:disabled,.secondary:disabled,.danger:disabled,.send-btn:disabled{
+      opacity:.55;
+      cursor:not-allowed
+    }
+
+    .search-wrap{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      flex-shrink:0
+    }
+
+    .search{
+      width:100%;
+      background:#202c33;
+      border:none;
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:10px;
+      outline:none
+    }
 
     .chat-list{
       flex:1;
@@ -89,15 +186,57 @@
       min-height:0;
     }
 
-    .chat-item{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:.15s}
-    .chat-item:hover,.chat-item.active{background:#1f2c34}
-    .chat-item .text{min-width:0;flex:1}
-    .chat-item .text h4{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .chat-item .text p{margin:4px 0 0;font-size:13px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .chat-item .time{font-size:11px;color:var(--soft);white-space:nowrap}
+    .chat-item{
+      display:flex;
+      gap:12px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.04);
+      cursor:pointer;
+      transition:.15s
+    }
 
-    .welcome{margin:auto;max-width:560px;text-align:center;padding:28px;color:var(--soft)}
-    .welcome h1{color:var(--text);margin-top:0}
+    .chat-item:hover,.chat-item.active{background:#1f2c34}
+
+    .chat-item .text{
+      min-width:0;
+      flex:1
+    }
+
+    .chat-item .text h4{
+      margin:0;
+      font-size:15px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+
+    .chat-item .text p{
+      margin:4px 0 0;
+      font-size:13px;
+      color:var(--soft);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis
+    }
+
+    .chat-item .time{
+      font-size:11px;
+      color:var(--soft);
+      white-space:nowrap
+    }
+
+    .welcome{
+      margin:auto;
+      max-width:560px;
+      text-align:center;
+      padding:28px;
+      color:var(--soft)
+    }
+
+    .welcome h1{
+      color:var(--text);
+      margin-top:0
+    }
 
     .messages{
       flex:1;
@@ -113,9 +252,21 @@
       -webkit-overflow-scrolling:touch;
     }
 
-    .msg-wrap{display:flex;flex-direction:column;max-width:75%}
-    .msg-wrap.me{align-self:flex-end;align-items:flex-end}
-    .msg-wrap.other{align-self:flex-start;align-items:flex-start}
+    .msg-wrap{
+      display:flex;
+      flex-direction:column;
+      max-width:75%
+    }
+
+    .msg-wrap.me{
+      align-self:flex-end;
+      align-items:flex-end
+    }
+
+    .msg-wrap.other{
+      align-self:flex-start;
+      align-items:flex-start
+    }
 
     .msg{
       position:relative;
@@ -126,10 +277,30 @@
       word-break:break-word;
     }
 
-    .msg.me{background:var(--bubble-me);border-bottom-right-radius:4px}
-    .msg.other{background:var(--bubble-other);border:1px solid rgba(255,255,255,.05);border-bottom-left-radius:4px}
-    .msg-name{font-size:12px;color:#88d7c4;margin:0 0 5px;font-weight:700}
-    .msg-meta{font-size:11px;color:#b7c4cb;margin-top:6px;text-align:right}
+    .msg.me{
+      background:var(--bubble-me);
+      border-bottom-right-radius:4px
+    }
+
+    .msg.other{
+      background:var(--bubble-other);
+      border:1px solid rgba(255,255,255,.05);
+      border-bottom-left-radius:4px
+    }
+
+    .msg-name{
+      font-size:12px;
+      color:#88d7c4;
+      margin:0 0 5px;
+      font-weight:700
+    }
+
+    .msg-meta{
+      font-size:11px;
+      color:#b7c4cb;
+      margin-top:6px;
+      text-align:right
+    }
 
     .delete-btn{
       position:absolute;
@@ -169,27 +340,49 @@
       flex-shrink:0;
     }
 
-    .composer textarea{flex:1;min-height:52px;max-height:140px;resize:none;background:#2a3942;color:var(--text);border:1px solid transparent;border-radius:14px;padding:14px;outline:none}
-    .send-btn{width:52px;height:52px;border-radius:14px;background:var(--accent);color:#fff;font-size:20px;font-weight:800;box-shadow:var(--shadow)}
+    .composer textarea{
+      flex:1;
+      min-height:52px;
+      max-height:140px;
+      resize:none;
+      background:#2a3942;
+      color:var(--text);
+      border:1px solid transparent;
+      border-radius:14px;
+      padding:14px;
+      outline:none
+    }
 
-    .badge{padding:5px 10px;border-radius:999px;background:rgba(0,168,132,.12);color:#81e6d0;font-size:12px;border:1px solid rgba(0,168,132,.2)}
+    .send-btn{
+      width:52px;
+      height:52px;
+      border-radius:14px;
+      background:var(--accent);
+      color:#fff;
+      font-size:20px;
+      font-weight:800;
+      box-shadow:var(--shadow)
+    }
+
+    .badge{
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(0,168,132,.12);
+      color:#81e6d0;
+      font-size:12px;
+      border:1px solid rgba(0,168,132,.2)
+    }
+
     .hidden{display:none !important}
 
-    .messages::-webkit-scrollbar{
-      width:8px;
-    }
-
-    .messages::-webkit-scrollbar-track{
-      background:transparent;
-    }
-
+    .messages::-webkit-scrollbar{width:8px}
+    .messages::-webkit-scrollbar-track{background:transparent}
     .messages::-webkit-scrollbar-thumb{
       background:rgba(255,255,255,0.18);
-      border-radius:999px;
+      border-radius:999px
     }
-
     .messages::-webkit-scrollbar-thumb:hover{
-      background:rgba(255,255,255,0.28);
+      background:rgba(255,255,255,0.28)
     }
 
     @media (max-width:900px){
@@ -314,7 +507,12 @@
     let pressTimer = null;
 
     function esc(str=""){
-      return str.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"', '&quot;').replaceAll("'", "&#039;");
+      return str
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", "&#039;");
     }
 
     function initials(name="?"){
@@ -384,11 +582,14 @@
     function sendBrowserNotification(title, body){
       if(!("Notification" in window)) return;
       if(Notification.permission !== "granted") return;
+
       try{
         const n = new Notification(title, {
           body,
-          tag: "pixelroom-message"
+          tag: "pixelroom-message",
+          icon: "https://cdn-icons-png.flaticon.com/512/2462/2462719.png"
         });
+
         n.onclick = () => {
           window.focus();
           n.close();
@@ -400,9 +601,7 @@
       const ownMessages = els.messages.querySelectorAll(".msg.me[data-id]");
 
       ownMessages.forEach(msgEl => {
-        const clearPress = () => {
-          clearTimeout(pressTimer);
-        };
+        const clearPress = () => clearTimeout(pressTimer);
 
         msgEl.addEventListener("pointerdown", () => {
           els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
@@ -443,11 +642,38 @@
 
     window.deleteMessage = deleteMessage;
 
+    function censorProfanity(text){
+      const banned = [
+        "amk","aq","amq","mk","oc","oç","orospu","orospuçocuğu","orospu cocugu",
+        "piç","pic","sik","sikerim","siktir","siktirgit","yarak","yarrak",
+        "ibne","göt","got","amına","amina","amcık","amcik",
+        "pezevenk","puşt","pust","ananı","anani","bacını","bacini",
+        "kahpe","salak","aptal"
+      ];
+
+      let result = text;
+
+      for(const word of banned){
+        const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+        const regex = new RegExp(`\\b${escaped}\\b`,"gi");
+
+        result = result.replace(regex,(match)=>{
+          if(match.length <= 2) return "*".repeat(match.length);
+          return match[0] + "*".repeat(match.length - 2) + match[match.length - 1];
+        });
+      }
+
+      return result;
+    }
+
     async function ensureAuth(){
       await signInAnonymously(auth);
       return new Promise(resolve => {
         onAuthStateChanged(auth, user => {
-          if(user){ me = user; resolve(user); }
+          if(user){
+            me = user;
+            resolve(user);
+          }
         });
       });
     }
@@ -456,13 +682,21 @@
       const localName = localStorage.getItem("pixelroom_name") || "";
       const localUsername = localStorage.getItem("pixelroom_username") || "";
       const snap = await get(ref(db, `profiles/${me.uid}`));
-      myProfile = snap.exists() ? snap.val() : { uid: me.uid, name: localName, username: localUsername };
+      myProfile = snap.exists()
+        ? snap.val()
+        : { uid: me.uid, name: localName, username: localUsername };
       updateHeader();
     }
 
     async function savePresence(){
       const pRef = ref(db, `presence/${me.uid}`);
-      await set(pRef, { uid: me.uid, online: true, username: myProfile?.username || "", name: myProfile?.name || "", at: Date.now() });
+      await set(pRef, {
+        uid: me.uid,
+        online: true,
+        username: myProfile?.username || "",
+        name: myProfile?.name || "",
+        at: Date.now()
+      });
       onDisconnect(pRef).remove();
     }
 
@@ -486,8 +720,10 @@
       myProfile = { uid: me.uid, name, username, updatedAt: Date.now() };
       await set(ref(db, `profiles/${me.uid}`), myProfile);
       await set(ref(db, `usernames/${username}`), me.uid);
+
       localStorage.setItem("pixelroom_name", name);
       localStorage.setItem("pixelroom_username", username);
+
       updateHeader();
       await savePresence();
       await loadChats();
@@ -497,7 +733,9 @@
 
     async function createOrOpenChat(targetUsernameRaw){
       if(!myProfile?.username) return alert("Önce profilini kaydet.");
+
       const targetUsername = (targetUsernameRaw || els.newChatInput.value).trim().toLowerCase();
+
       if(!targetUsername) return alert("Bir kullanıcı adı yaz.");
       if(targetUsername === myProfile.username) return alert("Kendinle sohbet açamazsın.");
 
@@ -507,17 +745,26 @@
       const targetUid = uidSnap.val();
       const targetProfileSnap = await get(ref(db, `profiles/${targetUid}`));
       if(!targetProfileSnap.exists()) return alert("Profil bulunamadı.");
-      const targetProfile = targetProfileSnap.val();
 
+      const targetProfile = targetProfileSnap.val();
       const chatId = roomId(myProfile.username, targetUsername);
       const metaRef = ref(db, `chats/${chatId}/meta`);
       const metaSnap = await get(metaRef);
+
       if(!metaSnap.exists()){
         await set(metaRef, {
           id: chatId,
           members: {
-            [me.uid]: { uid: me.uid, username: myProfile.username, name: myProfile.name },
-            [targetUid]: { uid: targetUid, username: targetProfile.username, name: targetProfile.name }
+            [me.uid]: {
+              uid: me.uid,
+              username: myProfile.username,
+              name: myProfile.name
+            },
+            [targetUid]: {
+              uid: targetUid,
+              username: targetProfile.username,
+              name: targetProfile.name
+            }
           },
           usernames: [myProfile.username, targetProfile.username],
           updatedAt: Date.now(),
@@ -527,8 +774,19 @@
         });
       }
 
-      await set(ref(db, `userChats/${me.uid}/${chatId}`), { chatId, peerUsername: targetProfile.username, peerName: targetProfile.name, updatedAt: Date.now() });
-      await set(ref(db, `userChats/${targetUid}/${chatId}`), { chatId, peerUsername: myProfile.username, peerName: myProfile.name, updatedAt: Date.now() });
+      await set(ref(db, `userChats/${me.uid}/${chatId}`), {
+        chatId,
+        peerUsername: targetProfile.username,
+        peerName: targetProfile.name,
+        updatedAt: Date.now()
+      });
+
+      await set(ref(db, `userChats/${targetUid}/${chatId}`), {
+        chatId,
+        peerUsername: myProfile.username,
+        peerName: myProfile.name,
+        updatedAt: Date.now()
+      });
 
       els.newChatInput.value = "";
       await loadChats();
@@ -537,29 +795,40 @@
 
     async function loadChats(){
       if(!me) return;
+
       const snap = await get(ref(db, `userChats/${me.uid}`));
       const data = snap.val() || {};
-      const entries = await Promise.all(Object.values(data).map(async item => {
-        const metaSnap = await get(ref(db, `chats/${item.chatId}/meta`));
-        const meta = metaSnap.val() || {};
-        return {
-          chatId: item.chatId,
-          peerName: item.peerName,
-          peerUsername: item.peerUsername,
-          lastMessage: meta.lastMessage || "Sohbet başlatıldı",
-          lastMessageAt: meta.lastMessageAt || meta.updatedAt || 0
-        };
-      }));
 
-      chatsCache = entries.sort((a,b) => (b.lastMessageAt||0) - (a.lastMessageAt||0));
+      const entries = await Promise.all(
+        Object.values(data).map(async item => {
+          const metaSnap = await get(ref(db, `chats/${item.chatId}/meta`));
+          const meta = metaSnap.val() || {};
+          return {
+            chatId: item.chatId,
+            peerName: item.peerName,
+            peerUsername: item.peerUsername,
+            lastMessage: meta.lastMessage || "Sohbet başlatıldı",
+            lastMessageAt: meta.lastMessageAt || meta.updatedAt || 0
+          };
+        })
+      );
+
+      chatsCache = entries.sort((a,b) => (b.lastMessageAt || 0) - (a.lastMessageAt || 0));
       renderChatList();
     }
 
     function renderChatList(){
       const q = els.chatSearch.value.trim().toLowerCase();
-      const list = chatsCache.filter(c => !q || c.peerName?.toLowerCase().includes(q) || c.peerUsername?.toLowerCase().includes(q) || c.lastMessage?.toLowerCase().includes(q));
+
+      const list = chatsCache.filter(c =>
+        !q ||
+        c.peerName?.toLowerCase().includes(q) ||
+        c.peerUsername?.toLowerCase().includes(q) ||
+        c.lastMessage?.toLowerCase().includes(q)
+      );
+
       els.chatList.innerHTML = list.map(c => `
-        <div class="chat-item ${activeChatId===c.chatId?"active":""}" data-chat="${c.chatId}" data-user="${c.peerUsername}">
+        <div class="chat-item ${activeChatId===c.chatId ? "active" : ""}" data-chat="${c.chatId}" data-user="${c.peerUsername}">
           <div class="avatar">${esc(initials(c.peerName || c.peerUsername))}</div>
           <div class="text">
             <h4>${esc(c.peerName || c.peerUsername)}</h4>
@@ -569,13 +838,15 @@
         </div>
       `).join("") || `<div class="welcome" style="padding:22px">Henüz sohbet yok.</div>`;
 
-      [...els.chatList.querySelectorAll('.chat-item')].forEach(item => {
+      [...els.chatList.querySelectorAll(".chat-item")].forEach(item => {
         item.onclick = async () => {
           const peerUsername = item.dataset.user;
           const uidSnap = await get(ref(db, `usernames/${peerUsername}`));
           if(!uidSnap.exists()) return;
+
           const profileSnap = await get(ref(db, `profiles/${uidSnap.val()}`));
           if(!profileSnap.exists()) return;
+
           openChat(item.dataset.chat, profileSnap.val());
         };
       });
@@ -586,6 +857,7 @@
       if(currentTypingRef) off(currentTypingRef);
       if(currentPresenceRef) off(currentPresenceRef);
       if(currentChatMetaRef) off(currentChatMetaRef);
+
       currentMessagesRef = null;
       currentTypingRef = null;
       currentPresenceRef = null;
@@ -595,8 +867,10 @@
 
     function openChat(chatId, peerProfile){
       cleanupChatListeners();
+
       activeChatId = chatId;
       activePeer = peerProfile;
+
       renderChatList();
       els.emptyChat.classList.add("hidden");
       els.activeChatWrap.classList.remove("hidden");
@@ -606,6 +880,7 @@
       els.presenceBadge.textContent = "offline";
       els.typingText.textContent = "";
       els.messages.innerHTML = "";
+
       showChatMobile();
 
       currentPresenceRef = ref(db, `presence/${peerProfile.uid}`);
@@ -613,18 +888,29 @@
         const val = snap.val();
         const online = !!val?.online;
         els.presenceBadge.textContent = online ? "online" : "offline";
-        els.chatSub.textContent = online ? `@${peerProfile.username} · çevrimiçi` : `@${peerProfile.username}`;
+        els.chatSub.textContent = online
+          ? `@${peerProfile.username} · çevrimiçi`
+          : `@${peerProfile.username}`;
       });
 
       currentTypingRef = ref(db, `chatTyping/${chatId}/${peerProfile.uid}`);
       onValue(currentTypingRef, snap => {
-        els.typingText.textContent = snap.exists() ? `${peerProfile.name || peerProfile.username} yazıyor...` : "";
+        els.typingText.textContent = snap.exists()
+          ? `${peerProfile.name || peerProfile.username} yazıyor...`
+          : "";
       });
 
-      currentMessagesRef = query(ref(db, `messages/${chatId}`), orderByChild("createdAt"), limitToLast(200));
+      currentMessagesRef = query(
+        ref(db, `messages/${chatId}`),
+        orderByChild("createdAt"),
+        limitToLast(200)
+      );
+
       onValue(currentMessagesRef, snap => {
         const data = snap.val() || {};
-        const entries = Object.entries(data).sort((a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0));
+        const entries = Object.entries(data).sort(
+          (a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0)
+        );
 
         els.messages.innerHTML = entries.map(([id, m]) => {
           const isMe = m.senderUid === me.uid;
@@ -675,37 +961,10 @@
       typingTimer = setTimeout(() => remove(tRef), 1200);
     }
 
-    function censorProfanity(text){
-
-  const banned = [
-  "amk","aq","amq","mk","oc","oç","orospu","orospuçocuğu","orospu cocugu",
-  "piç","pic","sik","sikerim","siktir","siktirgit","yarak","yarrak",
-  "ibne","göt","got","amına","amina","amcık","amcik",
-  "pezevenk","puşt","pust","ananı","anani","bacını","bacini",
-  "kahpe","salak","aptal"
-  ]
-
-  let result = text
-
-  for(const word of banned){
-
-    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")
-    const regex = new RegExp(`\\b${escaped}\\b`,"gi")
-
-    result = result.replace(regex,(match)=>{
-
-      if(match.length <= 2) return "*".repeat(match.length)
-
-      return match[0] + "*".repeat(match.length-2) + match[match.length-1]
-
-    })
-
-  }
-
-  return result
-}
     async function sendMessage(){
-      const text = els.messageInput.value.trim();
+      const rawText = els.messageInput.value.trim();
+      const text = censorProfanity(rawText);
+
       if(!text || !activeChatId || !myProfile) return;
 
       const msg = {
@@ -717,6 +976,7 @@
       };
 
       await push(ref(db, `messages/${activeChatId}`), msg);
+
       await update(ref(db, `chats/${activeChatId}/meta`), {
         lastMessage: text,
         lastMessageAt: msg.createdAt,
@@ -730,31 +990,38 @@
     }
 
     async function logOut(){
-      try{ await remove(ref(db, `presence/${me.uid}`)); }catch(e){}
+      try{
+        await remove(ref(db, `presence/${me.uid}`));
+      }catch(e){}
       await signOut(auth);
       location.reload();
     }
 
     els.saveProfileBtn.onclick = async () => {
       await requestNotificationPermission();
-      saveProfile();
+      await saveProfile();
     };
 
     els.newChatBtn.onclick = async () => {
       await requestNotificationPermission();
-      createOrOpenChat();
+      await createOrOpenChat();
     };
 
     els.refreshChatsBtn.onclick = loadChats;
     els.chatSearch.oninput = renderChatList;
+
     els.sendBtn.onclick = async () => {
       await requestNotificationPermission();
-      sendMessage();
+      await sendMessage();
     };
+
     els.logoutBtn.onclick = logOut;
     els.backBtn.onclick = showSidebarMobile;
 
-    els.messageInput.addEventListener("input", () => { autoGrow(); setTyping(); });
+    els.messageInput.addEventListener("input", () => {
+      autoGrow();
+      setTyping();
+    });
 
     els.messageInput.addEventListener("keydown", e => {
       if(e.key === "Enter" && !e.shiftKey){
@@ -769,7 +1036,9 @@
 
     document.addEventListener("click", (e) => {
       if(!e.target.closest(".msg.me")){
-        els.messages.querySelectorAll(".msg.show-delete").forEach(el => el.classList.remove("show-delete"));
+        els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
+          el.classList.remove("show-delete");
+        });
       }
     });
 
@@ -781,32 +1050,6 @@
       }
     });
 
-    async function requestNotificationPermission(){
-
-if(!("Notification" in window)) return
-
-if(Notification.permission === "default"){
-await Notification.requestPermission()
-}
-
-}
-
-function sendBrowserNotification(title,body){
-
-if(!("Notification" in window)) return
-if(Notification.permission !== "granted") return
-
-const n = new Notification(title,{
-body:body,
-icon:"https://cdn-icons-png.flaticon.com/512/2462/2462719.png"
-})
-
-n.onclick = ()=>{
-window.focus()
-n.close()
-}
-
-}
     (async function init(){
       try{
         await ensureAuth();
