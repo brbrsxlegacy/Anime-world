@@ -116,11 +116,40 @@
     .msg-wrap{display:flex;flex-direction:column;max-width:75%}
     .msg-wrap.me{align-self:flex-end;align-items:flex-end}
     .msg-wrap.other{align-self:flex-start;align-items:flex-start}
-    .msg{padding:10px 12px 8px;border-radius:14px;box-shadow:var(--shadow);line-height:1.45;word-break:break-word}
+
+    .msg{
+      position:relative;
+      padding:10px 12px 8px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      line-height:1.45;
+      word-break:break-word;
+    }
+
     .msg.me{background:var(--bubble-me);border-bottom-right-radius:4px}
     .msg.other{background:var(--bubble-other);border:1px solid rgba(255,255,255,.05);border-bottom-left-radius:4px}
     .msg-name{font-size:12px;color:#88d7c4;margin:0 0 5px;font-weight:700}
     .msg-meta{font-size:11px;color:#b7c4cb;margin-top:6px;text-align:right}
+
+    .delete-btn{
+      position:absolute;
+      top:-10px;
+      right:-10px;
+      background:var(--danger);
+      color:#fff;
+      border:none;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:700;
+      display:none;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+    }
+
+    .msg.show-delete .delete-btn{
+      display:block;
+    }
 
     .typing{
       min-height:18px;
@@ -281,16 +310,21 @@
     let currentTypingRef = null;
     let currentPresenceRef = null;
     let currentChatMetaRef = null;
+    let lastNotifiedMessageId = null;
+    let pressTimer = null;
 
     function esc(str=""){
       return str.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"', '&quot;').replaceAll("'", "&#039;");
     }
+
     function initials(name="?"){
       return name.trim().slice(0,2).toUpperCase() || "?";
     }
+
     function roomId(a,b){
       return [a.toLowerCase(), b.toLowerCase()].sort().join("__");
     }
+
     function formatTime(ts){
       if(!ts) return "";
       const d = new Date(ts);
@@ -298,18 +332,22 @@
       const mm = String(d.getMinutes()).padStart(2,"0");
       return `${hh}:${mm}`;
     }
+
     function formatListTime(ts){
       if(!ts) return "";
       const d = new Date(ts);
       return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
     }
+
     function autoGrow(){
       els.messageInput.style.height = "52px";
       els.messageInput.style.height = Math.min(140, els.messageInput.scrollHeight) + "px";
     }
+
     function mobileMode(){
       return window.innerWidth <= 900;
     }
+
     function showChatMobile(){
       if(mobileMode()){
         els.sidebar.classList.add("mobile-hidden");
@@ -317,6 +355,7 @@
         els.backBtn.classList.remove("hidden");
       }
     }
+
     function showSidebarMobile(){
       if(mobileMode()){
         els.chatArea.classList.remove("mobile-hidden");
@@ -324,6 +363,7 @@
         els.backBtn.classList.add("hidden");
       }
     }
+
     function updateHeader(){
       els.meAvatar.textContent = initials(myProfile?.name || "?");
       els.meName.textContent = myProfile?.name || "PixelRoom";
@@ -331,6 +371,77 @@
       els.nameInput.value = myProfile?.name || "";
       els.usernameInput.value = myProfile?.username || "";
     }
+
+    async function requestNotificationPermission(){
+      if(!("Notification" in window)) return;
+      if(Notification.permission === "default"){
+        try{
+          await Notification.requestPermission();
+        }catch(e){}
+      }
+    }
+
+    function sendBrowserNotification(title, body){
+      if(!("Notification" in window)) return;
+      if(Notification.permission !== "granted") return;
+      try{
+        const n = new Notification(title, {
+          body,
+          tag: "pixelroom-message"
+        });
+        n.onclick = () => {
+          window.focus();
+          n.close();
+        };
+      }catch(e){}
+    }
+
+    function attachLongPressEvents(){
+      const ownMessages = els.messages.querySelectorAll(".msg.me[data-id]");
+
+      ownMessages.forEach(msgEl => {
+        const clearPress = () => {
+          clearTimeout(pressTimer);
+        };
+
+        msgEl.addEventListener("pointerdown", () => {
+          els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
+            if(el !== msgEl) el.classList.remove("show-delete");
+          });
+
+          pressTimer = setTimeout(() => {
+            msgEl.classList.add("show-delete");
+          }, 450);
+        });
+
+        msgEl.addEventListener("pointerup", clearPress);
+        msgEl.addEventListener("pointerleave", clearPress);
+        msgEl.addEventListener("pointercancel", clearPress);
+
+        msgEl.addEventListener("click", (e) => {
+          if(!e.target.classList.contains("delete-btn")){
+            els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
+              if(el !== msgEl) el.classList.remove("show-delete");
+            });
+          }
+        });
+      });
+    }
+
+    async function deleteMessage(messageId){
+      if(!activeChatId || !messageId) return;
+      const ok = confirm("Bu mesaj silinsin mi?");
+      if(!ok) return;
+
+      try{
+        await remove(ref(db, `messages/${activeChatId}/${messageId}`));
+      }catch(e){
+        console.error(e);
+        alert("Mesaj silinemedi.");
+      }
+    }
+
+    window.deleteMessage = deleteMessage;
 
     async function ensureAuth(){
       await signInAnonymously(auth);
@@ -380,6 +491,7 @@
       updateHeader();
       await savePresence();
       await loadChats();
+      await requestNotificationPermission();
       alert("Profil kaydedildi.");
     }
 
@@ -478,6 +590,7 @@
       currentTypingRef = null;
       currentPresenceRef = null;
       currentChatMetaRef = null;
+      lastNotifiedMessageId = null;
     }
 
     function openChat(chatId, peerProfile){
@@ -511,20 +624,41 @@
       currentMessagesRef = query(ref(db, `messages/${chatId}`), orderByChild("createdAt"), limitToLast(200));
       onValue(currentMessagesRef, snap => {
         const data = snap.val() || {};
-        const arr = Object.values(data).sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
-        els.messages.innerHTML = arr.map(m => {
+        const entries = Object.entries(data).sort((a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0));
+
+        els.messages.innerHTML = entries.map(([id, m]) => {
           const isMe = m.senderUid === me.uid;
           return `
             <div class="msg-wrap ${isMe ? "me" : "other"}">
-              <div class="msg ${isMe ? "me" : "other"}">
+              <div class="msg ${isMe ? "me" : "other"}" ${isMe ? `data-id="${id}"` : ""}>
                 ${!isMe ? `<div class="msg-name">${esc(m.senderName || "")}</div>` : ""}
                 <div>${esc(m.text || "")}</div>
                 <div class="msg-meta">${formatTime(m.createdAt)}</div>
+                ${isMe ? `<button class="delete-btn" onclick="deleteMessage('${id}')">Sil</button>` : ""}
               </div>
             </div>
           `;
         }).join("") || `<div class="welcome" style="padding:28px">Henüz mesaj yok. İlk mesajı sen at.</div>`;
+
+        attachLongPressEvents();
         els.messages.scrollTop = els.messages.scrollHeight;
+
+        const lastEntry = entries[entries.length - 1];
+        if(lastEntry){
+          const [lastId, lastMsg] = lastEntry;
+          const isNew = lastNotifiedMessageId !== lastId;
+          const isFromOther = lastMsg.senderUid !== me.uid;
+          const pageHidden = document.hidden;
+
+          if(isNew && isFromOther && pageHidden){
+            sendBrowserNotification(
+              activePeer?.name || activePeer?.username || "Yeni mesaj",
+              lastMsg.text || "Yeni mesaj geldi"
+            );
+          }
+
+          lastNotifiedMessageId = lastId;
+        }
       });
 
       currentChatMetaRef = ref(db, `chats/${chatId}/meta`);
@@ -544,6 +678,7 @@
     async function sendMessage(){
       const text = els.messageInput.value.trim();
       if(!text || !activeChatId || !myProfile) return;
+
       const msg = {
         senderUid: me.uid,
         senderName: myProfile.name,
@@ -551,12 +686,14 @@
         text,
         createdAt: Date.now()
       };
+
       await push(ref(db, `messages/${activeChatId}`), msg);
       await update(ref(db, `chats/${activeChatId}/meta`), {
         lastMessage: text,
         lastMessageAt: msg.createdAt,
         updatedAt: msg.createdAt
       });
+
       els.messageInput.value = "";
       autoGrow();
       await remove(ref(db, `chatTyping/${activeChatId}/${me.uid}`));
@@ -569,21 +706,44 @@
       location.reload();
     }
 
-    els.saveProfileBtn.onclick = saveProfile;
-    els.newChatBtn.onclick = () => createOrOpenChat();
+    els.saveProfileBtn.onclick = async () => {
+      await requestNotificationPermission();
+      saveProfile();
+    };
+
+    els.newChatBtn.onclick = async () => {
+      await requestNotificationPermission();
+      createOrOpenChat();
+    };
+
     els.refreshChatsBtn.onclick = loadChats;
     els.chatSearch.oninput = renderChatList;
-    els.sendBtn.onclick = sendMessage;
+    els.sendBtn.onclick = async () => {
+      await requestNotificationPermission();
+      sendMessage();
+    };
     els.logoutBtn.onclick = logOut;
     els.backBtn.onclick = showSidebarMobile;
+
     els.messageInput.addEventListener("input", () => { autoGrow(); setTyping(); });
+
     els.messageInput.addEventListener("keydown", e => {
       if(e.key === "Enter" && !e.shiftKey){
         e.preventDefault();
         sendMessage();
       }
     });
-    els.newChatInput.addEventListener("keydown", e => { if(e.key === "Enter") createOrOpenChat(); });
+
+    els.newChatInput.addEventListener("keydown", e => {
+      if(e.key === "Enter") createOrOpenChat();
+    });
+
+    document.addEventListener("click", (e) => {
+      if(!e.target.closest(".msg.me")){
+        els.messages.querySelectorAll(".msg.show-delete").forEach(el => el.classList.remove("show-delete"));
+      }
+    });
+
     window.addEventListener("resize", () => {
       if(!mobileMode()){
         els.sidebar.classList.remove("mobile-hidden");
