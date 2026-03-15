@@ -6,20 +6,20 @@
   <title>PixelRoom</title>
   <style>
     :root{
-      --bg:#07111a;
-      --panel:#0f1c28;
-      --panel-2:#162635;
-      --panel-3:#1d3143;
-      --line:rgba(255,255,255,.08);
-      --soft:#8ea3b7;
-      --text:#eef6ff;
-      --accent:#12d3a6;
-      --accent-2:#2aa7ff;
-      --accent-3:#7a6bff;
-      --bubble-me:#114b45;
-      --bubble-other:#1d2e3d;
-      --danger:#ff6262;
-      --shadow:0 14px 40px rgba(0,0,0,.35);
+      --bg:#071018;
+      --bg2:#0b1622;
+      --panel:#101b28;
+      --panel2:#172434;
+      --panel3:#203042;
+      --line:rgba(255,255,255,.07);
+      --text:#eef7ff;
+      --soft:#92a6bc;
+      --accent:#11d7a7;
+      --accent2:#25a9ff;
+      --danger:#ff6b6b;
+      --mine:#0f5c52;
+      --other:#1c2a38;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
       --radius:18px;
     }
 
@@ -28,11 +28,11 @@
       margin:0;
       height:100%;
       font-family:Inter,system-ui,Arial,sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(18,211,166,.18), transparent 22%),
-        radial-gradient(circle at top right, rgba(42,167,255,.18), transparent 22%),
-        linear-gradient(180deg,#07111a,#0a1520 40%, #09131d);
       color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(17,215,167,.18), transparent 20%),
+        radial-gradient(circle at top right, rgba(37,169,255,.16), transparent 20%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
     }
 
     body{overflow:hidden}
@@ -41,12 +41,12 @@
     .app{
       height:100vh;
       display:grid;
-      grid-template-columns:340px 1fr;
+      grid-template-columns:360px 1fr;
       min-height:0;
     }
 
     .sidebar{
-      background:rgba(10,19,29,.88);
+      background:rgba(12,20,30,.88);
       backdrop-filter:blur(16px);
       border-right:1px solid var(--line);
       display:flex;
@@ -62,121 +62,44 @@
       display:flex;
       flex-direction:column;
       overflow:hidden;
+      background:
+        radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:20px 20px;
     }
 
-    .topbar{
+    .sidebar-top,
+    .chat-top{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:rgba(16,27,40,.92);
       display:flex;
       align-items:center;
       gap:12px;
-      padding:14px 16px;
-      background:rgba(15,28,40,.9);
-      border-bottom:1px solid var(--line);
       flex-shrink:0;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-
-    .logo{
+    .avatar{
       width:44px;
       height:44px;
       border-radius:50%;
       display:grid;
       place-items:center;
       font-weight:900;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
       color:white;
       flex-shrink:0;
       box-shadow:var(--shadow);
+      user-select:none;
     }
 
-    .brand-text h1{
-      margin:0;
-      font-size:18px;
-    }
-
-    .brand-text p{
-      margin:3px 0 0;
-      color:var(--soft);
-      font-size:12px;
-    }
-
-    .spacer{flex:1}
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .tab-btn{
-      border:none;
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 14px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:700;
-    }
-
-    .tab-btn.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-    }
-
-    .section{
-      display:none;
-      min-height:0;
+    .meta{
+      min-width:0;
       flex:1;
     }
 
-    .section.active{
-      display:flex;
-      min-height:0;
-    }
-
-    .sidebar-head{
-      padding:14px;
-      border-bottom:1px solid var(--line);
-      flex-shrink:0;
-    }
-
-    .profile-card,.action-card{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:12px;
-      box-shadow:var(--shadow);
-      margin-bottom:12px;
-    }
-
-    .me-row{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .avatar{
-      width:46px;
-      height:46px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
-      flex-shrink:0;
-    }
-
-    .meta{min-width:0}
     .meta h2,.meta h3{
       margin:0;
-      font-size:15px;
+      font-size:17px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -191,21 +114,48 @@
       text-overflow:ellipsis;
     }
 
+    .icon-btn,.primary,.secondary,.send-btn,.danger{
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      font-weight:800;
+    }
+
+    .icon-btn{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+    }
+
+    .panel{
+      padding:12px;
+      border-bottom:1px solid var(--line);
+      flex-shrink:0;
+    }
+
+    .card{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
+
     .label{
-      font-size:12px;
-      color:var(--soft);
       margin:0 0 8px;
+      color:var(--soft);
+      font-size:12px;
       text-transform:uppercase;
       letter-spacing:.08em;
     }
 
     .input,.search,.composer textarea{
       width:100%;
-      background:var(--panel-3);
-      border:1px solid transparent;
+      background:var(--panel3);
       color:var(--text);
-      outline:none;
+      border:1px solid transparent;
       border-radius:16px;
+      outline:none;
       padding:13px 14px;
     }
 
@@ -213,21 +163,16 @@
       border-color:var(--accent);
     }
 
+    .input{margin-bottom:10px}
+
     .row{
       display:flex;
       gap:8px;
     }
 
-    .primary,.secondary,.danger,.send-btn,.small-btn,.icon-btn{
-      border:none;
-      cursor:pointer;
-      border-radius:16px;
-      font-weight:800;
-    }
-
     .primary{
-      background:linear-gradient(135deg,var(--accent),#08b6c9);
-      color:#fff;
+      background:linear-gradient(135deg,var(--accent),#09bfe0);
+      color:white;
       padding:12px 14px;
       box-shadow:var(--shadow);
     }
@@ -239,50 +184,65 @@
     }
 
     .danger{
-      background:rgba(255,98,98,.12);
-      color:#ffb1b1;
-      border:1px solid rgba(255,98,98,.22);
+      background:rgba(255,107,107,.14);
+      color:#ffb7b7;
       padding:12px 14px;
+      border:1px solid rgba(255,107,107,.2);
     }
 
-    .icon-btn{
-      background:rgba(255,255,255,.06);
-      color:#fff;
+    .switcher{
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .switcher button{
+      flex:1;
+      border:none;
+      cursor:pointer;
       padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:800;
     }
 
-    .chat-search{
-      padding:10px 14px;
+    .switcher button.active{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+    }
+
+    .search-wrap{
+      padding:10px 12px;
       border-bottom:1px solid var(--line);
       flex-shrink:0;
     }
 
-    .chat-list{
+    .list{
       flex:1;
       min-height:0;
       overflow:auto;
     }
 
-    .chat-item{
+    .item{
       display:flex;
-      gap:12px;
       align-items:center;
+      gap:12px;
       padding:12px 14px;
       border-bottom:1px solid rgba(255,255,255,.04);
       cursor:pointer;
       transition:.15s;
     }
 
-    .chat-item:hover,.chat-item.active{
+    .item:hover,.item.active{
       background:rgba(255,255,255,.05);
     }
 
-    .chat-item .text{
+    .item .text{
       flex:1;
       min-width:0;
     }
 
-    .chat-item .text h4{
+    .item .text h4{
       margin:0;
       font-size:15px;
       white-space:nowrap;
@@ -290,55 +250,37 @@
       text-overflow:ellipsis;
     }
 
-    .chat-item .text p{
+    .item .text p{
       margin:4px 0 0;
-      font-size:12px;
       color:var(--soft);
+      font-size:12px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
 
-    .chat-item .time{
+    .item .time{
+      color:var(--soft);
       font-size:11px;
-      color:var(--soft);
-      flex-shrink:0;
-    }
-
-    .chat-panel{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-      min-height:0;
-      width:100%;
-    }
-
-    .empty{
-      margin:auto;
-      text-align:center;
-      color:var(--soft);
-      padding:30px;
-      max-width:520px;
-    }
-
-    .chat-top{
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background:rgba(15,28,40,.88);
-      display:flex;
-      align-items:center;
-      gap:12px;
       flex-shrink:0;
     }
 
     .badge{
       padding:6px 10px;
       border-radius:999px;
-      background:rgba(18,211,166,.12);
-      border:1px solid rgba(18,211,166,.2);
-      color:#88f1d6;
+      background:rgba(17,215,167,.12);
+      border:1px solid rgba(17,215,167,.2);
+      color:#8df1d8;
       font-size:12px;
       flex-shrink:0;
+    }
+
+    .empty{
+      margin:auto;
+      text-align:center;
+      max-width:520px;
+      color:var(--soft);
+      padding:28px;
     }
 
     .typing{
@@ -358,15 +300,13 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      background:radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:20px 20px;
       -webkit-overflow-scrolling:touch;
     }
 
     .msg-wrap{
       display:flex;
       flex-direction:column;
-      max-width:75%;
+      max-width:76%;
     }
 
     .msg-wrap.me{
@@ -383,33 +323,33 @@
       position:relative;
       padding:10px 12px 8px;
       border-radius:16px;
-      box-shadow:var(--shadow);
       line-height:1.45;
       word-break:break-word;
+      box-shadow:var(--shadow);
     }
 
     .msg.me{
-      background:var(--bubble-me);
+      background:var(--mine);
       border-bottom-right-radius:5px;
     }
 
     .msg.other{
-      background:var(--bubble-other);
+      background:var(--other);
       border:1px solid rgba(255,255,255,.05);
       border-bottom-left-radius:5px;
     }
 
     .msg-name{
       font-size:12px;
-      color:#8de9d3;
-      margin:0 0 5px;
       font-weight:800;
+      color:#8debd6;
+      margin:0 0 5px;
     }
 
     .msg-meta{
-      font-size:11px;
-      color:#b8c9d8;
       margin-top:6px;
+      color:#b8cada;
+      font-size:11px;
       text-align:right;
     }
 
@@ -417,16 +357,16 @@
       position:absolute;
       top:-10px;
       right:-10px;
-      background:var(--danger);
-      color:#fff;
+      display:none;
       border:none;
       border-radius:999px;
+      background:var(--danger);
+      color:white;
       padding:7px 10px;
       font-size:12px;
-      font-weight:700;
-      display:none;
-      box-shadow:var(--shadow);
+      font-weight:800;
       cursor:pointer;
+      box-shadow:var(--shadow);
     }
 
     .msg.show-delete .delete-btn{
@@ -435,7 +375,7 @@
 
     .composer{
       padding:10px 14px 14px;
-      background:rgba(15,28,40,.92);
+      background:rgba(16,27,40,.94);
       border-top:1px solid var(--line);
       display:flex;
       gap:10px;
@@ -453,125 +393,31 @@
     .send-btn{
       width:54px;
       height:54px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:white;
       font-size:22px;
+      box-shadow:var(--shadow);
       flex-shrink:0;
-      box-shadow:var(--shadow);
     }
 
-    .game-wrap,.film-wrap{
-      width:100%;
-      min-height:0;
-      overflow:auto;
-      padding:18px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:16px;
-    }
-
-    .card-big{
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:var(--shadow);
-    }
-
-    .card-big h3{
-      margin:0 0 10px;
-      font-size:22px;
-    }
-
-    .card-big p{
-      margin:0 0 14px;
-      color:var(--soft);
-      line-height:1.5;
-    }
-
-    .tabu-word{
-      font-size:34px;
-      font-weight:900;
-      margin:10px 0 14px;
-      color:#fff;
-    }
-
-    .forbidden-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .chip{
-      background:rgba(42,167,255,.12);
-      border:1px solid rgba(42,167,255,.2);
-      color:#9fd7ff;
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:700;
-    }
-
-    .small-btn{
-      padding:12px 14px;
-      background:linear-gradient(135deg,var(--accent-3),var(--accent-2));
-      color:#fff;
-    }
-
-    .film-card{
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .film-card h4{
-      margin:0;
-      font-size:18px;
-    }
-
-    .film-meta{
-      color:var(--soft);
-      font-size:13px;
-    }
-
-    .film-desc{
-      color:#d6e2ee;
-      font-size:14px;
-      line-height:1.5;
+    .mobile-back{
+      display:none;
     }
 
     .messages::-webkit-scrollbar,
-    .chat-list::-webkit-scrollbar,
-    .game-wrap::-webkit-scrollbar,
-    .film-wrap::-webkit-scrollbar{
+    .list::-webkit-scrollbar{
       width:8px;
     }
 
     .messages::-webkit-scrollbar-thumb,
-    .chat-list::-webkit-scrollbar-thumb,
-    .game-wrap::-webkit-scrollbar-thumb,
-    .film-wrap::-webkit-scrollbar-thumb{
+    .list::-webkit-scrollbar-thumb{
       background:rgba(255,255,255,.18);
       border-radius:999px;
     }
 
     .messages::-webkit-scrollbar-track,
-    .chat-list::-webkit-scrollbar-track,
-    .game-wrap::-webkit-scrollbar-track,
-    .film-wrap::-webkit-scrollbar-track{
+    .list::-webkit-scrollbar-track{
       background:transparent;
-    }
-
-    .mobile-back{
-      display:none;
     }
 
     @media (max-width:900px){
@@ -581,9 +427,7 @@
 
       .sidebar{
         position:fixed;
-        left:0;
-        top:0;
-        bottom:0;
+        inset:0;
         width:100%;
         z-index:20;
         border-right:none;
@@ -591,16 +435,14 @@
 
       .main{
         position:fixed;
-        left:0;
-        top:0;
-        bottom:0;
+        inset:0;
         width:100%;
         z-index:21;
-        background:
-          radial-gradient(circle at top left, rgba(18,211,166,.18), transparent 22%),
-          radial-gradient(circle at top right, rgba(42,167,255,.18), transparent 22%),
-          linear-gradient(180deg,#07111a,#0a1520 40%, #09131d);
         display:none;
+        background:
+          radial-gradient(circle at top left, rgba(17,215,167,.18), transparent 20%),
+          radial-gradient(circle at top right, rgba(37,169,255,.16), transparent 20%),
+          linear-gradient(180deg,var(--bg),var(--bg2));
       }
 
       .main.mobile-active{
@@ -611,71 +453,25 @@
         display:none;
       }
 
-      .topbar{
-        padding:10px;
-        gap:8px;
-      }
-
-      .brand-text p,
-      .label,
-      #typingText,
-      #meSub{
+      .panel{
         display:none;
       }
 
-      .tabs{
-        gap:6px;
+      .mobile-back{
+        display:inline-flex;
       }
 
-      .tab-btn{
-        padding:8px 10px;
-        font-size:12px;
-      }
-
-      .sidebar-head{
-        padding:10px 8px;
-      }
-
-      .profile-card,.action-card{
+      .meta p,
+      .typing{
         display:none;
       }
 
-      .row{
-        flex-direction:column;
-      }
-
-      .input,.search,.primary,.secondary,.danger{
-        font-size:12px;
-        padding:10px 12px;
-      }
-
-      .chat-search{
-        padding:8px;
-      }
-
-      .chat-item{
+      .item{
         padding:12px 10px;
-        gap:10px;
-        flex-direction:row;
-        align-items:center;
       }
 
-      .chat-item .avatar{
-        width:42px;
-        height:42px;
-        font-size:13px;
-      }
-
-      .chat-item .text h4{
-        font-size:14px;
-      }
-
-      .chat-item .text p{
+      .item .text p{
         display:block;
-      }
-
-      .chat-item .time{
-        font-size:11px;
       }
 
       .messages{
@@ -701,159 +497,77 @@
         height:46px;
         font-size:18px;
       }
-
-      .badge{
-        font-size:10px;
-        padding:4px 8px;
-      }
-
-      .card-big h3{
-        font-size:18px;
-      }
-
-      .tabu-word{
-        font-size:28px;
-      }
-
-      .mobile-back{
-        display:inline-flex;
-      }
-    }
-
-    @media (max-width:650px){
-      .logo,.avatar{
-        width:34px;
-        height:34px;
-        font-size:12px;
-      }
-
-      .brand-text h1{
-        font-size:15px;
-      }
-
-      .chat-top,.topbar{
-        padding:8px;
-      }
-
-      .meta p{
-        display:none;
-      }
-
-      .chat-item{
-        padding:10px 8px;
-      }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <aside id="sidebar" class="sidebar">
-      <div class="sidebar-head">
-        <div class="profile-card">
-          <div class="me-row">
-            <div id="meAvatar" class="avatar">?</div>
-            <div class="meta">
-              <h2 id="meName">PixelRoom</h2>
-              <p id="meSub">Bağlanıyor...</p>
-            </div>
-          </div>
+      <div class="sidebar-top">
+        <div id="meAvatar" class="avatar">?</div>
+        <div class="meta">
+          <h2 id="meName">PixelRoom</h2>
+          <p id="meSub">Bağlanıyor...</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="card">
+          <p class="label">Profil</p>
           <input id="nameInput" class="input" maxlength="20" placeholder="Görünen adın" />
           <input id="usernameInput" class="input" maxlength="20" placeholder="Kullanıcı adın" />
           <button id="saveProfileBtn" class="primary" style="width:100%">Profili Kaydet</button>
         </div>
 
-        <div class="action-card">
-          <input id="newChatInput" class="input" maxlength="20" placeholder="Arkadaş kullanıcı adı" />
+        <div class="card" style="margin-top:12px;">
+          <p class="label">Arkadaş</p>
+          <input id="friendInput" class="input" maxlength="20" placeholder="Arkadaş kullanıcı adı" />
           <div class="row">
-            <button id="newChatBtn" class="primary" style="flex:1">Sohbet Aç</button>
-            <button id="refreshChatsBtn" class="secondary">Yenile</button>
+            <button id="addFriendBtn" class="primary" style="flex:1">Arkadaş Ekle</button>
+            <button id="refreshBtn" class="secondary">Yenile</button>
+          </div>
+          <div class="switcher">
+            <button id="showChatsBtn" class="active">Sohbetler</button>
+            <button id="showFriendsBtn">Arkadaşlar</button>
           </div>
         </div>
       </div>
 
-      <div class="chat-search">
-        <input id="chatSearch" class="search" placeholder="Sohbetlerde ara" />
+      <div class="search-wrap">
+        <input id="searchInput" class="search" placeholder="Ara" />
       </div>
 
-      <div id="chatList" class="chat-list"></div>
+      <div id="chatList" class="list"></div>
+      <div id="friendsList" class="list" style="display:none;"></div>
     </aside>
 
     <main id="main" class="main">
-      <div class="topbar">
-        <button id="mobileBackTabsBtn" class="icon-btn mobile-back">←</button>
-        <div class="brand">
-          <div class="logo">P</div>
-          <div class="brand-text">
-            <h1>PixelRoom</h1>
-            <p>Chat + Oyun + Film</p>
-          </div>
+      <div class="chat-top">
+        <button id="mobileBackBtn" class="icon-btn mobile-back">←</button>
+        <div id="chatAvatar" class="avatar">?</div>
+        <div class="meta">
+          <h3 id="chatName">Sohbet</h3>
+          <p id="chatSub">Bağlanıyor...</p>
         </div>
         <div class="spacer"></div>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="chat">Chat</button>
-          <button class="tab-btn" data-tab="tabu">Tabu</button>
-          <button class="tab-btn" data-tab="film">Film</button>
-        </div>
+        <span id="presenceBadge" class="badge">offline</span>
         <button id="logoutBtn" class="icon-btn" title="Çık">⎋</button>
       </div>
 
-      <section id="chatSection" class="section active">
-        <div class="chat-panel">
-          <div id="emptyChat" class="empty">
-            <h2>PixelRoom hazır</h2>
-            <p>Soldan bir sohbete dokun ya da masaüstünde normal kullan.</p>
-          </div>
+      <div id="emptyChat" class="empty">
+        <h2>PixelRoom hazır</h2>
+        <p>Arkadaş ekle, sonra listeden birine basıp sohbet aç.</p>
+      </div>
 
-          <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
-            <div class="chat-top">
-              <button id="mobileBackChatBtn" class="icon-btn mobile-back">←</button>
-              <div id="chatAvatar" class="avatar">?</div>
-              <div class="meta">
-                <h3 id="chatName">Sohbet</h3>
-                <p id="chatSub">Bağlanıyor...</p>
-              </div>
-              <div class="spacer"></div>
-              <span id="presenceBadge" class="badge">offline</span>
-            </div>
+      <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
+        <div id="typingText" class="typing"></div>
+        <div id="messages" class="messages"></div>
 
-            <div id="typingText" class="typing"></div>
-            <div id="messages" class="messages"></div>
-
-            <div class="composer">
-              <textarea id="messageInput" placeholder="Mesaj yaz"></textarea>
-              <button id="sendBtn" class="send-btn">➤</button>
-            </div>
-          </div>
+        <div class="composer">
+          <textarea id="messageInput" placeholder="Mesaj yaz"></textarea>
+          <button id="sendBtn" class="send-btn">➤</button>
         </div>
-      </section>
-
-      <section id="tabuSection" class="section">
-        <div class="game-wrap">
-          <div class="grid">
-            <div class="card-big">
-              <h3>Tabu Kartı</h3>
-              <p>Kelimeyi anlat ama yasaklı kelimeleri söyleme.</p>
-              <div id="tabuWord" class="tabu-word">Telefon</div>
-              <div id="forbiddenList" class="forbidden-list"></div>
-              <div style="margin-top:14px;">
-                <button id="nextTabuBtn" class="small-btn">Yeni Kart</button>
-              </div>
-            </div>
-
-            <div class="card-big">
-              <h3>Nasıl Oynanır?</h3>
-              <p>Bir kişi karttaki ana kelimeyi anlatır. Takım arkadaşı tahmin eder. Yasaklı kelimeleri söylersen tur bozulur.</p>
-              <p>Süre tutmak için telefonun kronometresini açabilirsin.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="filmSection" class="section">
-        <div class="film-wrap">
-          <div class="grid" id="filmGrid"></div>
-        </div>
-      </section>
+      </div>
     </main>
   </div>
 
@@ -887,31 +601,29 @@
       meAvatar: $("meAvatar"),
       meName: $("meName"),
       meSub: $("meSub"),
-      logoutBtn: $("logoutBtn"),
       nameInput: $("nameInput"),
       usernameInput: $("usernameInput"),
       saveProfileBtn: $("saveProfileBtn"),
-      newChatInput: $("newChatInput"),
-      newChatBtn: $("newChatBtn"),
-      refreshChatsBtn: $("refreshChatsBtn"),
-      chatSearch: $("chatSearch"),
+      friendInput: $("friendInput"),
+      addFriendBtn: $("addFriendBtn"),
+      refreshBtn: $("refreshBtn"),
+      showChatsBtn: $("showChatsBtn"),
+      showFriendsBtn: $("showFriendsBtn"),
+      searchInput: $("searchInput"),
       chatList: $("chatList"),
-      emptyChat: $("emptyChat"),
-      activeChatWrap: $("activeChatWrap"),
+      friendsList: $("friendsList"),
       chatAvatar: $("chatAvatar"),
       chatName: $("chatName"),
       chatSub: $("chatSub"),
       presenceBadge: $("presenceBadge"),
+      logoutBtn: $("logoutBtn"),
+      mobileBackBtn: $("mobileBackBtn"),
+      emptyChat: $("emptyChat"),
+      activeChatWrap: $("activeChatWrap"),
       typingText: $("typingText"),
       messages: $("messages"),
       messageInput: $("messageInput"),
-      sendBtn: $("sendBtn"),
-      tabuWord: $("tabuWord"),
-      forbiddenList: $("forbiddenList"),
-      nextTabuBtn: $("nextTabuBtn"),
-      filmGrid: $("filmGrid"),
-      mobileBackChatBtn: $("mobileBackChatBtn"),
-      mobileBackTabsBtn: $("mobileBackTabsBtn")
+      sendBtn: $("sendBtn")
     };
 
     let me = null;
@@ -919,6 +631,8 @@
     let activeChatId = null;
     let activePeer = null;
     let chatsCache = [];
+    let friendsCache = [];
+    let showMode = "chats";
     let typingTimer = null;
     let currentMessagesRef = null;
     let currentTypingRef = null;
@@ -926,25 +640,6 @@
     let currentChatMetaRef = null;
     let lastNotifiedMessageId = null;
     let pressTimer = null;
-
-    const tabuCards = [
-      { word:"Telefon", forbidden:["arama","mesaj","ekran","şarj","mobil"] },
-      { word:"Futbol", forbidden:["top","gol","kaleci","maç","saha"] },
-      { word:"Minecraft", forbidden:["blok","kazmak","creeper","survival","oyun"] },
-      { word:"Pizza", forbidden:["peynir","hamur","dilim","fırın","yemek"] },
-      { word:"Öğretmen", forbidden:["okul","ders","sınıf","tahta","öğrenci"] },
-      { word:"Film", forbidden:["sinema","izlemek","oyuncu","sahne","ekran"] },
-      { word:"Bilgisayar", forbidden:["klavye","mouse","ekran","oyun","internet"] }
-    ];
-
-    const films = [
-      { title:"Spider-Man: Into the Spider-Verse", type:"Animasyon / Macera", year:"2018", desc:"Hızlı, yaratıcı ve aşırı keyifli bir örümcek evreni filmi." },
-      { title:"The Mitchells vs. The Machines", type:"Animasyon / Komedi", year:"2021", desc:"Ailece izlenebilecek, komik ve enerjik bir teknoloji-kaos filmi." },
-      { title:"Free Guy", type:"Aksiyon / Komedi", year:"2021", desc:"Oyun dünyası havası veren eğlenceli ve hafif bir film." },
-      { title:"Big Hero 6", type:"Animasyon / Bilim Kurgu", year:"2014", desc:"Hem duygulu hem de eğlenceli, teknoloji temalı güzel bir yapım." },
-      { title:"The Super Mario Bros. Movie", type:"Animasyon / Macera", year:"2023", desc:"Renkli, hızlı ve oyun sevenler için baya keyifli." },
-      { title:"Guardians of the Galaxy", type:"Bilim Kurgu / Macera", year:"2014", desc:"Ekip, mizah ve aksiyon seviyorsan iyi gider." }
-    ];
 
     function isMobile(){
       return window.innerWidth <= 900;
@@ -956,7 +651,7 @@
       els.main.classList.remove("mobile-active");
     }
 
-    function showMobileMain(){
+    function showMobileChat(){
       if(!isMobile()) return;
       els.sidebar.classList.add("mobile-hidden");
       els.main.classList.add("mobile-active");
@@ -972,7 +667,7 @@
     }
 
     function initials(name="?"){
-      return name.trim().slice(0,2).toUpperCase() || "?";
+      return (name || "?").trim().slice(0,2).toUpperCase() || "?";
     }
 
     function roomId(a,b){
@@ -1006,44 +701,12 @@
       els.usernameInput.value = myProfile?.username || "";
     }
 
-    function switchTab(tabName){
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tab === tabName);
-      });
-
-      document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-      if(tabName === "chat") $("chatSection").classList.add("active");
-      if(tabName === "tabu") $("tabuSection").classList.add("active");
-      if(tabName === "film") $("filmSection").classList.add("active");
-
-      if(isMobile()){
-        showMobileMain();
-      }
-    }
-
-    function renderFilms(){
-      els.filmGrid.innerHTML = films.map(f => `
-        <div class="film-card">
-          <h4>${esc(f.title)}</h4>
-          <div class="film-meta">${esc(f.type)} • ${esc(f.year)}</div>
-          <div class="film-desc">${esc(f.desc)}</div>
-        </div>
-      `).join("");
-    }
-
-    function randomTabu(){
-      const card = tabuCards[Math.floor(Math.random() * tabuCards.length)];
-      els.tabuWord.textContent = card.word;
-      els.forbiddenList.innerHTML = card.forbidden.map(w => `<span class="chip">${esc(w)}</span>`).join("");
-    }
-
-    async function requestNotificationPermission(){
-      if(!("Notification" in window)) return;
+    function requestNotificationPermission(){
+      if(!("Notification" in window)) return Promise.resolve();
       if(Notification.permission === "default"){
-        try{
-          await Notification.requestPermission();
-        }catch(e){}
+        return Notification.requestPermission().catch(() => {});
       }
+      return Promise.resolve();
     }
 
     function sendBrowserNotification(title, body){
@@ -1051,65 +714,13 @@
       if(Notification.permission !== "granted") return;
 
       try{
-        const n = new Notification(title, {
-          body,
-          tag: "pixelroom-message",
-          renotify: true
-        });
-
+        const n = new Notification(title, { body, tag:"pixelroom-message" });
         n.onclick = () => {
           window.focus();
           n.close();
         };
-      }catch(e){
-        console.error("Bildirim hatası:", e);
-      }
+      }catch(e){}
     }
-
-    function attachLongPressEvents(){
-      const ownMessages = els.messages.querySelectorAll(".msg.me[data-id]");
-
-      ownMessages.forEach(msgEl => {
-        const clearPress = () => clearTimeout(pressTimer);
-
-        msgEl.addEventListener("pointerdown", () => {
-          els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
-            if(el !== msgEl) el.classList.remove("show-delete");
-          });
-
-          pressTimer = setTimeout(() => {
-            msgEl.classList.add("show-delete");
-          }, 450);
-        });
-
-        msgEl.addEventListener("pointerup", clearPress);
-        msgEl.addEventListener("pointerleave", clearPress);
-        msgEl.addEventListener("pointercancel", clearPress);
-
-        msgEl.addEventListener("click", (e) => {
-          if(!e.target.classList.contains("delete-btn")){
-            els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
-              if(el !== msgEl) el.classList.remove("show-delete");
-            });
-          }
-        });
-      });
-    }
-
-    async function deleteMessage(messageId){
-      if(!activeChatId || !messageId) return;
-      const ok = confirm("Bu mesaj silinsin mi?");
-      if(!ok) return;
-
-      try{
-        await remove(ref(db, `messages/${activeChatId}/${messageId}`));
-      }catch(e){
-        console.error(e);
-        alert("Mesaj silinemedi.");
-      }
-    }
-
-    window.deleteMessage = deleteMessage;
 
     function censorProfanity(text){
       const banned = [
@@ -1121,18 +732,24 @@
       ];
 
       let result = text;
-
       for(const word of banned){
         const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
         const regex = new RegExp(`\\b${escaped}\\b`,"gi");
-
         result = result.replace(regex,(match)=>{
           if(match.length <= 2) return "*".repeat(match.length);
           return match[0] + "*".repeat(match.length - 2) + match[match.length - 1];
         });
       }
-
       return result;
+    }
+
+    function setMode(mode){
+      showMode = mode;
+      const isChats = mode === "chats";
+      els.chatList.style.display = isChats ? "block" : "none";
+      els.friendsList.style.display = isChats ? "none" : "block";
+      els.showChatsBtn.classList.toggle("active", isChats);
+      els.showFriendsBtn.classList.toggle("active", !isChats);
     }
 
     async function ensureAuth(){
@@ -1195,16 +812,86 @@
 
       updateHeader();
       await savePresence();
+      await loadFriends();
       await loadChats();
-      await requestNotificationPermission();
       alert("Profil kaydedildi.");
+    }
+
+    async function addFriend(){
+      if(!myProfile?.username) return alert("Önce profilini kaydet.");
+
+      const friendUsername = els.friendInput.value.trim().toLowerCase();
+      if(!friendUsername) return alert("Bir kullanıcı adı yaz.");
+      if(friendUsername === myProfile.username) return alert("Kendini ekleyemezsin.");
+
+      const userSnap = await get(ref(db, `usernames/${friendUsername}`));
+      if(!userSnap.exists()) return alert("Bu kullanıcı bulunamadı.");
+
+      const friendUid = userSnap.val();
+      const profileSnap = await get(ref(db, `profiles/${friendUid}`));
+      if(!profileSnap.exists()) return alert("Profil bulunamadı.");
+
+      const friendProfile = profileSnap.val();
+
+      await set(ref(db, `friends/${me.uid}/${friendUid}`), {
+        uid: friendUid,
+        username: friendProfile.username,
+        name: friendProfile.name || friendProfile.username,
+        addedAt: Date.now()
+      });
+
+      await set(ref(db, `friends/${friendUid}/${me.uid}`), {
+        uid: me.uid,
+        username: myProfile.username,
+        name: myProfile.name || myProfile.username,
+        addedAt: Date.now()
+      });
+
+      els.friendInput.value = "";
+      await loadFriends();
+      setMode("friends");
+      alert("Arkadaş eklendi.");
+    }
+
+    async function loadFriends(){
+      if(!me) return;
+      const snap = await get(ref(db, `friends/${me.uid}`));
+      const data = snap.val() || {};
+      friendsCache = Object.values(data).sort((a,b) =>
+        (a.name || "").localeCompare((b.name || ""), "tr")
+      );
+      renderFriendsList();
+    }
+
+    function renderFriendsList(){
+      const q = els.searchInput.value.trim().toLowerCase();
+      const list = friendsCache.filter(f =>
+        !q ||
+        (f.name || "").toLowerCase().includes(q) ||
+        (f.username || "").toLowerCase().includes(q)
+      );
+
+      els.friendsList.innerHTML = list.map(f => `
+        <div class="item friend-item" data-username="${esc(f.username)}">
+          <div class="avatar">${esc(initials(f.name || f.username))}</div>
+          <div class="text">
+            <h4>${esc(f.name || f.username)}</h4>
+            <p>@${esc(f.username)}</p>
+          </div>
+        </div>
+      `).join("") || `<div class="empty" style="padding:22px">Henüz arkadaş yok.</div>`;
+
+      [...els.friendsList.querySelectorAll(".friend-item")].forEach(item => {
+        item.onclick = async () => {
+          await createOrOpenChat(item.dataset.username);
+        };
+      });
     }
 
     async function createOrOpenChat(targetUsernameRaw){
       if(!myProfile?.username) return alert("Önce profilini kaydet.");
 
-      const targetUsername = (targetUsernameRaw || els.newChatInput.value).trim().toLowerCase();
-
+      const targetUsername = (targetUsernameRaw || "").trim().toLowerCase();
       if(!targetUsername) return alert("Bir kullanıcı adı yaz.");
       if(targetUsername === myProfile.username) return alert("Kendinle sohbet açamazsın.");
 
@@ -1224,16 +911,8 @@
         await set(metaRef, {
           id: chatId,
           members: {
-            [me.uid]: {
-              uid: me.uid,
-              username: myProfile.username,
-              name: myProfile.name
-            },
-            [targetUid]: {
-              uid: targetUid,
-              username: targetProfile.username,
-              name: targetProfile.name
-            }
+            [me.uid]: { uid: me.uid, username: myProfile.username, name: myProfile.name },
+            [targetUid]: { uid: targetUid, username: targetProfile.username, name: targetProfile.name }
           },
           usernames: [myProfile.username, targetProfile.username],
           updatedAt: Date.now(),
@@ -1257,14 +936,12 @@
         updatedAt: Date.now()
       });
 
-      els.newChatInput.value = "";
       await loadChats();
       openChat(chatId, targetProfile);
     }
 
     async function loadChats(){
       if(!me) return;
-
       const snap = await get(ref(db, `userChats/${me.uid}`));
       const data = snap.val() || {};
 
@@ -1287,17 +964,16 @@
     }
 
     function renderChatList(){
-      const q = els.chatSearch.value.trim().toLowerCase();
-
+      const q = els.searchInput.value.trim().toLowerCase();
       const list = chatsCache.filter(c =>
         !q ||
-        c.peerName?.toLowerCase().includes(q) ||
-        c.peerUsername?.toLowerCase().includes(q) ||
-        c.lastMessage?.toLowerCase().includes(q)
+        (c.peerName || "").toLowerCase().includes(q) ||
+        (c.peerUsername || "").toLowerCase().includes(q) ||
+        (c.lastMessage || "").toLowerCase().includes(q)
       );
 
       els.chatList.innerHTML = list.map(c => `
-        <div class="chat-item ${activeChatId===c.chatId ? "active" : ""}" data-chat="${c.chatId}" data-user="${c.peerUsername}">
+        <div class="item ${activeChatId===c.chatId ? "active" : ""}" data-chat="${c.chatId}" data-user="${c.peerUsername}">
           <div class="avatar">${esc(initials(c.peerName || c.peerUsername))}</div>
           <div class="text">
             <h4>${esc(c.peerName || c.peerUsername)}</h4>
@@ -1307,7 +983,7 @@
         </div>
       `).join("") || `<div class="empty" style="padding:22px">Henüz sohbet yok.</div>`;
 
-      [...els.chatList.querySelectorAll(".chat-item")].forEach(item => {
+      [...els.chatList.querySelectorAll(".item")].forEach(item => {
         item.onclick = async () => {
           const peerUsername = item.dataset.user;
           const uidSnap = await get(ref(db, `usernames/${peerUsername}`));
@@ -1326,13 +1002,47 @@
       if(currentTypingRef) off(currentTypingRef);
       if(currentPresenceRef) off(currentPresenceRef);
       if(currentChatMetaRef) off(currentChatMetaRef);
-
       currentMessagesRef = null;
       currentTypingRef = null;
       currentPresenceRef = null;
       currentChatMetaRef = null;
       lastNotifiedMessageId = null;
     }
+
+    function attachLongPressEvents(){
+      const ownMessages = els.messages.querySelectorAll(".msg.me[data-id]");
+      ownMessages.forEach(msgEl => {
+        const clearPress = () => clearTimeout(pressTimer);
+
+        msgEl.addEventListener("pointerdown", () => {
+          els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
+            if(el !== msgEl) el.classList.remove("show-delete");
+          });
+
+          pressTimer = setTimeout(() => {
+            msgEl.classList.add("show-delete");
+          }, 450);
+        });
+
+        msgEl.addEventListener("pointerup", clearPress);
+        msgEl.addEventListener("pointerleave", clearPress);
+        msgEl.addEventListener("pointercancel", clearPress);
+      });
+    }
+
+    async function deleteMessage(messageId){
+      if(!activeChatId || !messageId) return;
+      const ok = confirm("Bu mesaj silinsin mi?");
+      if(!ok) return;
+
+      try{
+        await remove(ref(db, `messages/${activeChatId}/${messageId}`));
+      }catch(e){
+        alert("Mesaj silinemedi.");
+      }
+    }
+
+    window.deleteMessage = deleteMessage;
 
     function openChat(chatId, peerProfile){
       cleanupChatListeners();
@@ -1349,12 +1059,6 @@
       els.presenceBadge.textContent = "offline";
       els.typingText.textContent = "";
       els.messages.innerHTML = "";
-
-      if(isMobile()){
-        switchTab("chat");
-      } else {
-        els.main.classList.add("mobile-active");
-      }
 
       currentPresenceRef = ref(db, `presence/${peerProfile.uid}`);
       onValue(currentPresenceRef, snap => {
@@ -1381,9 +1085,7 @@
 
       onValue(currentMessagesRef, snap => {
         const data = snap.val() || {};
-        const entries = Object.entries(data).sort(
-          (a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0)
-        );
+        const entries = Object.entries(data).sort((a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0));
 
         els.messages.innerHTML = entries.map(([id, m]) => {
           const isMe = m.senderUid === me.uid;
@@ -1397,7 +1099,7 @@
               </div>
             </div>
           `;
-        }).join("") || `<div class="empty" style="padding:28px">Henüz mesaj yok. İlk mesajı sen at.</div>`;
+        }).join("") || `<div class="empty" style="padding:28px">Henüz mesaj yok.</div>`;
 
         attachLongPressEvents();
         els.messages.scrollTop = els.messages.scrollHeight;
@@ -1407,15 +1109,9 @@
           const [lastId, lastMsg] = lastEntry;
           const isNew = lastNotifiedMessageId !== lastId;
           const isFromOther = lastMsg.senderUid !== me.uid;
-          const pageHidden = document.hidden;
-
-          if(isNew && isFromOther && pageHidden){
-            sendBrowserNotification(
-              activePeer?.name || activePeer?.username || "Yeni mesaj",
-              lastMsg.text || "Yeni mesaj geldi"
-            );
+          if(isNew && isFromOther && document.hidden){
+            sendBrowserNotification(activePeer?.name || "Yeni mesaj", lastMsg.text || "Yeni mesaj geldi");
           }
-
           lastNotifiedMessageId = lastId;
         }
       });
@@ -1425,7 +1121,7 @@
         await loadChats();
       });
 
-      showMobileMain();
+      if(isMobile()) showMobileChat();
     }
 
     async function setTyping(){
@@ -1439,7 +1135,6 @@
     async function sendMessage(){
       const rawText = els.messageInput.value.trim();
       const text = censorProfanity(rawText);
-
       if(!text || !activeChatId || !myProfile) return;
 
       const msg = {
@@ -1451,7 +1146,6 @@
       };
 
       await push(ref(db, `messages/${activeChatId}`), msg);
-
       await update(ref(db, `chats/${activeChatId}/meta`), {
         lastMessage: text,
         lastMessageAt: msg.createdAt,
@@ -1472,22 +1166,24 @@
       location.reload();
     }
 
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-    });
-
     els.saveProfileBtn.onclick = async () => {
       await requestNotificationPermission();
       await saveProfile();
     };
 
-    els.newChatBtn.onclick = async () => {
-      await requestNotificationPermission();
-      await createOrOpenChat();
+    els.addFriendBtn.onclick = addFriend;
+    els.refreshBtn.onclick = async () => {
+      await loadFriends();
+      await loadChats();
     };
 
-    els.refreshChatsBtn.onclick = loadChats;
-    els.chatSearch.oninput = renderChatList;
+    els.showChatsBtn.onclick = () => setMode("chats");
+    els.showFriendsBtn.onclick = () => setMode("friends");
+
+    els.searchInput.oninput = () => {
+      if(showMode === "chats") renderChatList();
+      else renderFriendsList();
+    };
 
     els.sendBtn.onclick = async () => {
       await requestNotificationPermission();
@@ -1495,18 +1191,7 @@
     };
 
     els.logoutBtn.onclick = logOut;
-    els.nextTabuBtn.onclick = () => {
-      switchTab("tabu");
-      randomTabu();
-    };
-
-    els.mobileBackChatBtn.onclick = () => {
-      showMobileList();
-    };
-
-    els.mobileBackTabsBtn.onclick = () => {
-      showMobileList();
-    };
+    els.mobileBackBtn.onclick = showMobileList;
 
     els.messageInput.addEventListener("input", () => {
       autoGrow();
@@ -1520,8 +1205,8 @@
       }
     });
 
-    els.newChatInput.addEventListener("keydown", e => {
-      if(e.key === "Enter") createOrOpenChat();
+    els.friendInput.addEventListener("keydown", e => {
+      if(e.key === "Enter") addFriend();
     });
 
     document.addEventListener("click", (e) => {
@@ -1541,18 +1226,16 @@
 
     (async function init(){
       try{
-        renderFilms();
-        randomTabu();
         await ensureAuth();
         await loadMyProfile();
         await savePresence();
+        await loadFriends();
         await loadChats();
         updateHeader();
         await requestNotificationPermission();
+        setMode("chats");
 
-        if(isMobile()){
-          showMobileList();
-        }
+        if(isMobile()) showMobileList();
       }catch(err){
         console.error(err);
         alert("Firebase bağlantısı kurulamadı. Anonymous Auth veya Realtime Database kapalı olabilir.");
