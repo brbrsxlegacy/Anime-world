@@ -3,1244 +3,504 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelRoom</title>
+  <title>Bad Lands - Starter</title>
   <style>
-    :root{
-      --bg:#071018;
-      --bg2:#0b1622;
-      --panel:#101b28;
-      --panel2:#172434;
-      --panel3:#203042;
-      --line:rgba(255,255,255,.07);
-      --text:#eef7ff;
-      --soft:#92a6bc;
-      --accent:#11d7a7;
-      --accent2:#25a9ff;
-      --danger:#ff6b6b;
-      --mine:#0f5c52;
-      --other:#1c2a38;
-      --shadow:0 18px 50px rgba(0,0,0,.35);
-      --radius:18px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background: #87ceeb; }
+    #app { position: relative; width: 100%; height: 100%; }
+    #bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, #9ad8ff 0%, #c9ecff 35%, #dff5ff 55%, #a6d47a 56%, #7fb35c 100%);
+    }
+    #scene { position: absolute; inset: 0; }
+
+    .hud {
+      position: absolute; inset: 0; pointer-events: none;
+      display: grid; grid-template-columns: 260px 1fr 280px;
+      padding: 20px;
+      gap: 20px;
     }
 
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      height:100%;
-      font-family:Inter,system-ui,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(17,215,167,.18), transparent 20%),
-        radial-gradient(circle at top right, rgba(37,169,255,.16), transparent 20%),
-        linear-gradient(180deg,var(--bg),var(--bg2));
+    .panel {
+      pointer-events: auto;
+      background: rgba(15, 23, 42, 0.74);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      color: white;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
     }
 
-    body{overflow:hidden}
-    button,input,textarea{font:inherit}
-
-    .app{
-      height:100vh;
-      display:grid;
-      grid-template-columns:360px 1fr;
-      min-height:0;
+    .left-panel {
+      padding: 18px;
+      align-self: center;
     }
 
-    .sidebar{
-      background:rgba(12,20,30,.88);
-      backdrop-filter:blur(16px);
-      border-right:1px solid var(--line);
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-      min-height:0;
-      overflow:hidden;
+    .left-panel h2, .right-panel h2 { font-size: 28px; margin-bottom: 16px; }
+    .power-item {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .power-item:hover, .power-item.active {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.1);
+    }
+    .power-item h3 { font-size: 18px; margin-bottom: 6px; }
+    .power-item p { font-size: 13px; opacity: 0.85; }
+
+    .center-ui {
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+    }
+    .logo {
+      margin-top: 8px;
+      text-align: center;
+      color: white;
+      text-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    .logo h1 { font-size: 64px; letter-spacing: 2px; }
+    .logo p { font-size: 18px; opacity: 0.9; }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      pointer-events: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      border: none;
+      background: rgba(255,255,255,0.92);
+      color: #0f172a;
+      padding: 14px 22px;
+      border-radius: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+      transition: 0.18s ease;
+    }
+    .btn:hover { transform: translateY(-2px) scale(1.02); }
+    .btn.primary { background: linear-gradient(135deg, #ff884d, #ff5d5d); color: white; }
+
+    .right-panel {
+      padding: 18px;
+      align-self: center;
+    }
+    .stat {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+    }
+    .mini-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .mini-btn {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
     }
 
-    .main{
-      min-width:0;
-      min-height:0;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      background:
-        radial-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:20px 20px;
+    .toast {
+      position: absolute;
+      left: 50%; bottom: 26px;
+      transform: translateX(-50%);
+      background: rgba(15,23,42,0.82);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      opacity: 0;
+      transition: 0.25s ease;
+      pointer-events: none;
     }
-
-    .sidebar-top,
-    .chat-top{
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background:rgba(16,27,40,.92);
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex-shrink:0;
-    }
-
-    .avatar{
-      width:44px;
-      height:44px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:white;
-      flex-shrink:0;
-      box-shadow:var(--shadow);
-      user-select:none;
-    }
-
-    .meta{
-      min-width:0;
-      flex:1;
-    }
-
-    .meta h2,.meta h3{
-      margin:0;
-      font-size:17px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .meta p{
-      margin:4px 0 0;
-      color:var(--soft);
-      font-size:12px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .icon-btn,.primary,.secondary,.send-btn,.danger{
-      border:none;
-      cursor:pointer;
-      border-radius:16px;
-      font-weight:800;
-    }
-
-    .icon-btn{
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;
-    }
-
-    .panel{
-      padding:12px;
-      border-bottom:1px solid var(--line);
-      flex-shrink:0;
-    }
-
-    .card{
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:12px;
-      box-shadow:var(--shadow);
-    }
-
-    .label{
-      margin:0 0 8px;
-      color:var(--soft);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .input,.search,.composer textarea{
-      width:100%;
-      background:var(--panel3);
-      color:var(--text);
-      border:1px solid transparent;
-      border-radius:16px;
-      outline:none;
-      padding:13px 14px;
-    }
-
-    .input:focus,.search:focus,.composer textarea:focus{
-      border-color:var(--accent);
-    }
-
-    .input{margin-bottom:10px}
-
-    .row{
-      display:flex;
-      gap:8px;
-    }
-
-    .primary{
-      background:linear-gradient(135deg,var(--accent),#09bfe0);
-      color:white;
-      padding:12px 14px;
-      box-shadow:var(--shadow);
-    }
-
-    .secondary{
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:12px 14px;
-    }
-
-    .danger{
-      background:rgba(255,107,107,.14);
-      color:#ffb7b7;
-      padding:12px 14px;
-      border:1px solid rgba(255,107,107,.2);
-    }
-
-    .switcher{
-      display:flex;
-      gap:8px;
-      margin-top:10px;
-    }
-
-    .switcher button{
-      flex:1;
-      border:none;
-      cursor:pointer;
-      padding:10px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:800;
-    }
-
-    .switcher button.active{
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-    }
-
-    .search-wrap{
-      padding:10px 12px;
-      border-bottom:1px solid var(--line);
-      flex-shrink:0;
-    }
-
-    .list{
-      flex:1;
-      min-height:0;
-      overflow:auto;
-    }
-
-    .item{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.04);
-      cursor:pointer;
-      transition:.15s;
-    }
-
-    .item:hover,.item.active{
-      background:rgba(255,255,255,.05);
-    }
-
-    .item .text{
-      flex:1;
-      min-width:0;
-    }
-
-    .item .text h4{
-      margin:0;
-      font-size:15px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .item .text p{
-      margin:4px 0 0;
-      color:var(--soft);
-      font-size:12px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .item .time{
-      color:var(--soft);
-      font-size:11px;
-      flex-shrink:0;
-    }
-
-    .badge{
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(17,215,167,.12);
-      border:1px solid rgba(17,215,167,.2);
-      color:#8df1d8;
-      font-size:12px;
-      flex-shrink:0;
-    }
-
-    .empty{
-      margin:auto;
-      text-align:center;
-      max-width:520px;
-      color:var(--soft);
-      padding:28px;
-    }
-
-    .typing{
-      min-height:18px;
-      color:var(--soft);
-      font-size:12px;
-      padding:8px 18px 0;
-      flex-shrink:0;
-    }
-
-    .messages{
-      flex:1;
-      min-height:0;
-      overflow-y:auto;
-      overflow-x:hidden;
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    .msg-wrap{
-      display:flex;
-      flex-direction:column;
-      max-width:76%;
-    }
-
-    .msg-wrap.me{
-      align-self:flex-end;
-      align-items:flex-end;
-    }
-
-    .msg-wrap.other{
-      align-self:flex-start;
-      align-items:flex-start;
-    }
-
-    .msg{
-      position:relative;
-      padding:10px 12px 8px;
-      border-radius:16px;
-      line-height:1.45;
-      word-break:break-word;
-      box-shadow:var(--shadow);
-    }
-
-    .msg.me{
-      background:var(--mine);
-      border-bottom-right-radius:5px;
-    }
-
-    .msg.other{
-      background:var(--other);
-      border:1px solid rgba(255,255,255,.05);
-      border-bottom-left-radius:5px;
-    }
-
-    .msg-name{
-      font-size:12px;
-      font-weight:800;
-      color:#8debd6;
-      margin:0 0 5px;
-    }
-
-    .msg-meta{
-      margin-top:6px;
-      color:#b8cada;
-      font-size:11px;
-      text-align:right;
-    }
-
-    .delete-btn{
-      position:absolute;
-      top:-10px;
-      right:-10px;
-      display:none;
-      border:none;
-      border-radius:999px;
-      background:var(--danger);
-      color:white;
-      padding:7px 10px;
-      font-size:12px;
-      font-weight:800;
-      cursor:pointer;
-      box-shadow:var(--shadow);
-    }
-
-    .msg.show-delete .delete-btn{
-      display:block;
-    }
-
-    .composer{
-      padding:10px 14px 14px;
-      background:rgba(16,27,40,.94);
-      border-top:1px solid var(--line);
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-      flex-shrink:0;
-    }
-
-    .composer textarea{
-      flex:1;
-      min-height:54px;
-      max-height:140px;
-      resize:none;
-    }
-
-    .send-btn{
-      width:54px;
-      height:54px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:white;
-      font-size:22px;
-      box-shadow:var(--shadow);
-      flex-shrink:0;
-    }
-
-    .mobile-back{
-      display:none;
-    }
-
-    .messages::-webkit-scrollbar,
-    .list::-webkit-scrollbar{
-      width:8px;
-    }
-
-    .messages::-webkit-scrollbar-thumb,
-    .list::-webkit-scrollbar-thumb{
-      background:rgba(255,255,255,.18);
-      border-radius:999px;
-    }
-
-    .messages::-webkit-scrollbar-track,
-    .list::-webkit-scrollbar-track{
-      background:transparent;
-    }
-
-    @media (max-width:900px){
-      .app{
-        grid-template-columns:1fr;
-      }
-
-      .sidebar{
-        position:fixed;
-        inset:0;
-        width:100%;
-        z-index:20;
-        border-right:none;
-      }
-
-      .main{
-        position:fixed;
-        inset:0;
-        width:100%;
-        z-index:21;
-        display:none;
-        background:
-          radial-gradient(circle at top left, rgba(17,215,167,.18), transparent 20%),
-          radial-gradient(circle at top right, rgba(37,169,255,.16), transparent 20%),
-          linear-gradient(180deg,var(--bg),var(--bg2));
-      }
-
-      .main.mobile-active{
-        display:flex;
-      }
-
-      .sidebar.mobile-hidden{
-        display:none;
-      }
-
-      .panel{
-        display:none;
-      }
-
-      .mobile-back{
-        display:inline-flex;
-      }
-
-      .meta p,
-      .typing{
-        display:none;
-      }
-
-      .item{
-        padding:12px 10px;
-      }
-
-      .item .text p{
-        display:block;
-      }
-
-      .messages{
-        padding:10px;
-      }
-
-      .msg-wrap{
-        max-width:92%;
-      }
-
-      .composer{
-        padding:8px;
-      }
-
-      .composer textarea{
-        min-height:46px;
-        padding:12px;
-        font-size:14px;
-      }
-
-      .send-btn{
-        width:46px;
-        height:46px;
-        font-size:18px;
-      }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 1100px) {
+      .hud { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+      .left-panel, .right-panel { width: min(100%, 520px); justify-self: center; }
+      .logo h1 { font-size: 42px; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-top">
-        <div id="meAvatar" class="avatar">?</div>
-        <div class="meta">
-          <h2 id="meName">PixelRoom</h2>
-          <p id="meSub">Bağlanıyor...</p>
+  <div id="app">
+    <div id="bg"></div>
+    <div id="scene"></div>
+
+    <div class="hud">
+      <div class="panel left-panel">
+        <h2>Powers</h2>
+        <div class="power-item active" data-power="fire">
+          <h3>Alev Atışı</h3>
+          <p>Havalı ateş patlamaları. Başlangıç gücü.</p>
+        </div>
+        <div class="power-item" data-power="laser">
+          <h3>Göz Lazeri</h3>
+          <p>Tek gözden düz ve güçlü lazer vurur.</p>
+        </div>
+        <div class="power-item" data-power="water">
+          <h3>Su Atışı</h3>
+          <p>Seri ve akışkan vuruş efekti verir.</p>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="card">
-          <p class="label">Profil</p>
-          <input id="nameInput" class="input" maxlength="20" placeholder="Görünen adın" />
-          <input id="usernameInput" class="input" maxlength="20" placeholder="Kullanıcı adın" />
-          <button id="saveProfileBtn" class="primary" style="width:100%">Profili Kaydet</button>
+      <div class="center-ui">
+        <div class="logo">
+          <h1>BAD LANDS</h1>
+          <p>Online boss fight başlangıç ekranı</p>
         </div>
 
-        <div class="card" style="margin-top:12px;">
-          <p class="label">Arkadaş</p>
-          <input id="friendInput" class="input" maxlength="20" placeholder="Arkadaş kullanıcı adı" />
-          <div class="row">
-            <button id="addFriendBtn" class="primary" style="flex:1">Arkadaş Ekle</button>
-            <button id="refreshBtn" class="secondary">Yenile</button>
-          </div>
-          <div class="switcher">
-            <button id="showChatsBtn" class="active">Sohbetler</button>
-            <button id="showFriendsBtn">Arkadaşlar</button>
-          </div>
+        <div class="buttons">
+          <button class="btn primary" id="playBtn">Play</button>
+          <button class="btn" id="shopBtn">Shop</button>
+          <button class="btn" id="jacketBtn">Ceket</button>
+          <button class="btn" id="soundBtn">Ses: Açık</button>
         </div>
       </div>
 
-      <div class="search-wrap">
-        <input id="searchInput" class="search" placeholder="Ara" />
-      </div>
-
-      <div id="chatList" class="list"></div>
-      <div id="friendsList" class="list" style="display:none;"></div>
-    </aside>
-
-    <main id="main" class="main">
-      <div class="chat-top">
-        <button id="mobileBackBtn" class="icon-btn mobile-back">←</button>
-        <div id="chatAvatar" class="avatar">?</div>
-        <div class="meta">
-          <h3 id="chatName">Sohbet</h3>
-          <p id="chatSub">Bağlanıyor...</p>
-        </div>
-        <div class="spacer"></div>
-        <span id="presenceBadge" class="badge">offline</span>
-        <button id="logoutBtn" class="icon-btn" title="Çık">⎋</button>
-      </div>
-
-      <div id="emptyChat" class="empty">
-        <h2>PixelRoom hazır</h2>
-        <p>Arkadaş ekle, sonra listeden birine basıp sohbet aç.</p>
-      </div>
-
-      <div id="activeChatWrap" class="hidden" style="display:flex;flex-direction:column;height:100%;min-height:0;">
-        <div id="typingText" class="typing"></div>
-        <div id="messages" class="messages"></div>
-
-        <div class="composer">
-          <textarea id="messageInput" placeholder="Mesaj yaz"></textarea>
-          <button id="sendBtn" class="send-btn">➤</button>
+      <div class="panel right-panel">
+        <h2>Karakter</h2>
+        <div class="stat"><span>Seviye</span><strong id="levelText">1</strong></div>
+        <div class="stat"><span>Güç</span><strong id="powerText">Alev</strong></div>
+        <div class="stat"><span>Ceket</span><strong id="jacketText">Kapalı</strong></div>
+        <div class="stat"><span>Coin</span><strong>250</strong></div>
+        <div class="mini-btns">
+          <button class="mini-btn" id="upgradeBtn">Upgrade</button>
+          <button class="mini-btn" id="skinBtn">Skin</button>
+          <button class="mini-btn" id="settingsBtn">Settings</button>
+          <button class="mini-btn" id="fxBtn">FX Test</button>
         </div>
       </div>
-    </main>
+    </div>
+
+    <div class="toast" id="toast">Hazır</div>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import {
-      getDatabase, ref, set, get, update, push, onValue, off, remove,
-      query, orderByChild, limitToLast, onDisconnect
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyABqkhpL1SMRzRJ9GQLjjZE2IryqpAvMPw",
-      authDomain: "pixelroom-ae218.firebaseapp.com",
-      databaseURL: "https://pixelroom-ae218-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "pixelroom-ae218",
-      storageBucket: "pixelroom-ae218.firebasestorage.app",
-      messagingSenderId: "720297722320",
-      appId: "1:720297722320:web:c815edae99d1efa7ff39d5",
-      measurementId: "G-HD8901B19M"
+    const sceneWrap = document.getElementById('scene');
+    const toast = document.getElementById('toast');
+    const levelText = document.getElementById('levelText');
+    const powerText = document.getElementById('powerText');
+    const jacketText = document.getElementById('jacketText');
+
+    let soundOn = true;
+    let jacketOn = false;
+    let currentPower = 'fire';
+    let level = 1;
+
+    const powerNames = {
+      fire: 'Alev',
+      laser: 'Lazer',
+      water: 'Su'
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    sceneWrap.appendChild(renderer.domElement);
 
-    const $ = id => document.getElementById(id);
-    const els = {
-      sidebar: $("sidebar"),
-      main: $("main"),
-      meAvatar: $("meAvatar"),
-      meName: $("meName"),
-      meSub: $("meSub"),
-      nameInput: $("nameInput"),
-      usernameInput: $("usernameInput"),
-      saveProfileBtn: $("saveProfileBtn"),
-      friendInput: $("friendInput"),
-      addFriendBtn: $("addFriendBtn"),
-      refreshBtn: $("refreshBtn"),
-      showChatsBtn: $("showChatsBtn"),
-      showFriendsBtn: $("showFriendsBtn"),
-      searchInput: $("searchInput"),
-      chatList: $("chatList"),
-      friendsList: $("friendsList"),
-      chatAvatar: $("chatAvatar"),
-      chatName: $("chatName"),
-      chatSub: $("chatSub"),
-      presenceBadge: $("presenceBadge"),
-      logoutBtn: $("logoutBtn"),
-      mobileBackBtn: $("mobileBackBtn"),
-      emptyChat: $("emptyChat"),
-      activeChatWrap: $("activeChatWrap"),
-      typingText: $("typingText"),
-      messages: $("messages"),
-      messageInput: $("messageInput"),
-      sendBtn: $("sendBtn")
-    };
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0xbfeaff, 18, 45);
 
-    let me = null;
-    let myProfile = null;
-    let activeChatId = null;
-    let activePeer = null;
-    let chatsCache = [];
-    let friendsCache = [];
-    let showMode = "chats";
-    let typingTimer = null;
-    let currentMessagesRef = null;
-    let currentTypingRef = null;
-    let currentPresenceRef = null;
-    let currentChatMetaRef = null;
-    let lastNotifiedMessageId = null;
-    let pressTimer = null;
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 4.5, 10);
 
-    function isMobile(){
-      return window.innerWidth <= 900;
-    }
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x7db15c, 1.2);
+    scene.add(hemi);
 
-    function showMobileList(){
-      if(!isMobile()) return;
-      els.sidebar.classList.remove("mobile-hidden");
-      els.main.classList.remove("mobile-active");
-    }
+    const dir = new THREE.DirectionalLight(0xffffff, 1.15);
+    dir.position.set(6, 10, 5);
+    dir.castShadow = true;
+    scene.add(dir);
 
-    function showMobileChat(){
-      if(!isMobile()) return;
-      els.sidebar.classList.add("mobile-hidden");
-      els.main.classList.add("mobile-active");
-    }
+    const ground = new THREE.Mesh(
+      new THREE.CircleGeometry(18, 64),
+      new THREE.MeshStandardMaterial({ color: 0x75b65d, roughness: 0.95 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
 
-    function esc(str=""){
-      return str
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", "&#039;");
-    }
+    const arenaRing = new THREE.Mesh(
+      new THREE.TorusGeometry(5.2, 0.18, 18, 100),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x88ccff, emissiveIntensity: 0.35 })
+    );
+    arenaRing.rotation.x = Math.PI / 2;
+    arenaRing.position.y = 0.05;
+    scene.add(arenaRing);
 
-    function initials(name="?"){
-      return (name || "?").trim().slice(0,2).toUpperCase() || "?";
-    }
-
-    function roomId(a,b){
-      return [a.toLowerCase(), b.toLowerCase()].sort().join("__");
-    }
-
-    function formatTime(ts){
-      if(!ts) return "";
-      const d = new Date(ts);
-      const hh = String(d.getHours()).padStart(2,"0");
-      const mm = String(d.getMinutes()).padStart(2,"0");
-      return `${hh}:${mm}`;
-    }
-
-    function formatListTime(ts){
-      if(!ts) return "";
-      const d = new Date(ts);
-      return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-    }
-
-    function autoGrow(){
-      els.messageInput.style.height = "54px";
-      els.messageInput.style.height = Math.min(140, els.messageInput.scrollHeight) + "px";
-    }
-
-    function updateHeader(){
-      els.meAvatar.textContent = initials(myProfile?.name || "?");
-      els.meName.textContent = myProfile?.name || "PixelRoom";
-      els.meSub.textContent = myProfile?.username ? `@${myProfile.username}` : "Profilini ayarla";
-      els.nameInput.value = myProfile?.name || "";
-      els.usernameInput.value = myProfile?.username || "";
-    }
-
-    function requestNotificationPermission(){
-      if(!("Notification" in window)) return Promise.resolve();
-      if(Notification.permission === "default"){
-        return Notification.requestPermission().catch(() => {});
+    const cloudGroup = new THREE.Group();
+    for (let i = 0; i < 8; i++) {
+      const cloud = new THREE.Group();
+      const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+      for (let j = 0; j < 4; j++) {
+        const puff = new THREE.Mesh(new THREE.SphereGeometry(0.7 + Math.random() * 0.5, 20, 20), mat);
+        puff.position.set(j * 0.7, Math.random() * 0.2, Math.random() * 0.4);
+        cloud.add(puff);
       }
-      return Promise.resolve();
+      cloud.position.set((Math.random() - 0.5) * 22, 6 + Math.random() * 3, -8 - Math.random() * 10);
+      cloud.userData.speed = 0.002 + Math.random() * 0.003;
+      cloudGroup.add(cloud);
+    }
+    scene.add(cloudGroup);
+
+    const character = new THREE.Group();
+    scene.add(character);
+
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe8eefc, roughness: 0.6 });
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x4466ff, emissiveIntensity: 0.2 });
+    const blackMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    const limbMat = new THREE.MeshStandardMaterial({ color: 0x2f3640, roughness: 0.8 });
+    const jacketMat = new THREE.MeshStandardMaterial({ color: 0x203a5f, roughness: 0.7 });
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2.3, 3.6, 1.4), bodyMat);
+    body.position.y = 2.5;
+    body.castShadow = true;
+    character.add(body);
+
+    const eye = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 0.34, 32), eyeMat);
+    eye.rotation.x = Math.PI / 2;
+    eye.position.set(0, 2.65, 0.89);
+    eye.castShadow = true;
+    character.add(eye);
+
+    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 24), blackMat);
+    pupil.position.set(0, 2.65, 1.06);
+    character.add(pupil);
+
+    const smile = new THREE.Mesh(
+      new THREE.TorusGeometry(0.5, 0.05, 10, 40, Math.PI),
+      blackMat
+    );
+    smile.position.set(0, 1.8, 0.73);
+    smile.rotation.z = Math.PI;
+    character.add(smile);
+
+    function makeLimb(x, y, rot = 0) {
+      const limb = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 1.6, 6, 14), limbMat);
+      limb.position.set(x, y, 0);
+      limb.rotation.z = rot;
+      limb.castShadow = true;
+      return limb;
     }
 
-    function sendBrowserNotification(title, body){
-      if(!("Notification" in window)) return;
-      if(Notification.permission !== "granted") return;
+    const leftArm = makeLimb(-1.45, 2.25, 0.08);
+    const rightArm = makeLimb(1.45, 2.25, -0.08);
+    const leftLeg = makeLimb(-0.45, 0.75, 0.02);
+    const rightLeg = makeLimb(0.45, 0.75, -0.02);
+    character.add(leftArm, rightArm, leftLeg, rightLeg);
 
-      try{
-        const n = new Notification(title, { body, tag:"pixelroom-message" });
-        n.onclick = () => {
-          window.focus();
-          n.close();
-        };
-      }catch(e){}
-    }
+    const jacket = new THREE.Group();
+    const jacketBody = new THREE.Mesh(new THREE.BoxGeometry(2.45, 2.55, 1.5), jacketMat);
+    jacketBody.position.set(0, 2.25, 0);
+    const stripeMat = new THREE.MeshStandardMaterial({ color: 0x79c2ff, emissive: 0x244bff, emissiveIntensity: 0.4 });
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.4, 1.52), stripeMat);
+    stripe.position.set(0, 2.25, 0.01);
+    jacket.add(jacketBody, stripe);
+    jacket.visible = false;
+    character.add(jacket);
 
-    function censorProfanity(text){
-      const banned = [
-        "amk","aq","amq","mk","oc","oç","orospu","orospuçocuğu","orospu cocugu",
-        "piç","pic","sik","sikerim","siktir","siktirgit","yarak","yarrak",
-        "ibne","göt","got","amına","amina","amcık","amcik",
-        "pezevenk","puşt","pust","ananı","anani","bacını","bacini",
-        "kahpe","salak","aptal","mal"
-      ];
+    const powerGroup = new THREE.Group();
+    scene.add(powerGroup);
 
-      let result = text;
-      for(const word of banned){
-        const escaped = word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-        const regex = new RegExp(`\\b${escaped}\\b`,"gi");
-        result = result.replace(regex,(match)=>{
-          if(match.length <= 2) return "*".repeat(match.length);
-          return match[0] + "*".repeat(match.length - 2) + match[match.length - 1];
-        });
+    function clearPowers() {
+      while (powerGroup.children.length) {
+        const child = powerGroup.children.pop();
+        child.geometry?.dispose?.();
+        if (Array.isArray(child.material)) child.material.forEach(m => m.dispose?.());
+        else child.material?.dispose?.();
       }
-      return result;
     }
 
-    function setMode(mode){
-      showMode = mode;
-      const isChats = mode === "chats";
-      els.chatList.style.display = isChats ? "block" : "none";
-      els.friendsList.style.display = isChats ? "none" : "block";
-      els.showChatsBtn.classList.toggle("active", isChats);
-      els.showFriendsBtn.classList.toggle("active", !isChats);
-    }
-
-    async function ensureAuth(){
-      await signInAnonymously(auth);
-      return new Promise(resolve => {
-        onAuthStateChanged(auth, user => {
-          if(user){
-            me = user;
-            resolve(user);
-          }
-        });
-      });
-    }
-
-    async function loadMyProfile(){
-      const localName = localStorage.getItem("pixelroom_name") || "";
-      const localUsername = localStorage.getItem("pixelroom_username") || "";
-      const snap = await get(ref(db, `profiles/${me.uid}`));
-      myProfile = snap.exists()
-        ? snap.val()
-        : { uid: me.uid, name: localName, username: localUsername };
-      updateHeader();
-    }
-
-    async function savePresence(){
-      const pRef = ref(db, `presence/${me.uid}`);
-      await set(pRef, {
-        uid: me.uid,
-        online: true,
-        username: myProfile?.username || "",
-        name: myProfile?.name || "",
-        at: Date.now()
-      });
-      onDisconnect(pRef).remove();
-    }
-
-    async function saveProfile(){
-      const name = els.nameInput.value.trim().replace(/\s+/g, " ");
-      const username = els.usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_.]/g, "");
-
-      if(name.length < 2) return alert("Ad en az 2 karakter olsun.");
-      if(username.length < 3) return alert("Kullanıcı adı en az 3 karakter olsun.");
-
-      const usernameSnap = await get(ref(db, `usernames/${username}`));
-      if(usernameSnap.exists() && usernameSnap.val() !== me.uid){
-        return alert("Bu kullanıcı adı dolu.");
+    function spawnFire() {
+      clearPowers();
+      for (let i = 0; i < 14; i++) {
+        const orb = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08 + Math.random() * 0.14, 16, 16),
+          new THREE.MeshStandardMaterial({ color: 0xff6a00, emissive: 0xff3300, emissiveIntensity: 1.5 })
+        );
+        orb.position.set((Math.random() - 0.5) * 0.35, 2.68 + (Math.random() - 0.5) * 0.25, 1.2 + Math.random() * 0.8);
+        orb.userData = { baseZ: orb.position.z, speed: 0.015 + Math.random() * 0.025, kind: 'fire' };
+        powerGroup.add(orb);
       }
-
-      const oldUsername = myProfile?.username;
-      if(oldUsername && oldUsername !== username){
-        await remove(ref(db, `usernames/${oldUsername}`));
-      }
-
-      myProfile = { uid: me.uid, name, username, updatedAt: Date.now() };
-      await set(ref(db, `profiles/${me.uid}`), myProfile);
-      await set(ref(db, `usernames/${username}`), me.uid);
-
-      localStorage.setItem("pixelroom_name", name);
-      localStorage.setItem("pixelroom_username", username);
-
-      updateHeader();
-      await savePresence();
-      await loadFriends();
-      await loadChats();
-      alert("Profil kaydedildi.");
     }
 
-    async function addFriend(){
-      if(!myProfile?.username) return alert("Önce profilini kaydet.");
-
-      const friendUsername = els.friendInput.value.trim().toLowerCase();
-      if(!friendUsername) return alert("Bir kullanıcı adı yaz.");
-      if(friendUsername === myProfile.username) return alert("Kendini ekleyemezsin.");
-
-      const userSnap = await get(ref(db, `usernames/${friendUsername}`));
-      if(!userSnap.exists()) return alert("Bu kullanıcı bulunamadı.");
-
-      const friendUid = userSnap.val();
-      const profileSnap = await get(ref(db, `profiles/${friendUid}`));
-      if(!profileSnap.exists()) return alert("Profil bulunamadı.");
-
-      const friendProfile = profileSnap.val();
-
-      await set(ref(db, `friends/${me.uid}/${friendUid}`), {
-        uid: friendUid,
-        username: friendProfile.username,
-        name: friendProfile.name || friendProfile.username,
-        addedAt: Date.now()
-      });
-
-      await set(ref(db, `friends/${friendUid}/${me.uid}`), {
-        uid: me.uid,
-        username: myProfile.username,
-        name: myProfile.name || myProfile.username,
-        addedAt: Date.now()
-      });
-
-      els.friendInput.value = "";
-      await loadFriends();
-      setMode("friends");
-      alert("Arkadaş eklendi.");
-    }
-
-    async function loadFriends(){
-      if(!me) return;
-      const snap = await get(ref(db, `friends/${me.uid}`));
-      const data = snap.val() || {};
-      friendsCache = Object.values(data).sort((a,b) =>
-        (a.name || "").localeCompare((b.name || ""), "tr")
+    function spawnLaser() {
+      clearPowers();
+      const beam = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.17, 4.8, 18),
+        new THREE.MeshStandardMaterial({ color: 0x7fe7ff, emissive: 0x29c7ff, emissiveIntensity: 2.2, transparent: true, opacity: 0.88 })
       );
-      renderFriendsList();
-    }
+      beam.rotation.x = Math.PI / 2;
+      beam.position.set(0, 2.65, 3.2);
+      beam.userData = { kind: 'laser' };
+      powerGroup.add(beam);
 
-    function renderFriendsList(){
-      const q = els.searchInput.value.trim().toLowerCase();
-      const list = friendsCache.filter(f =>
-        !q ||
-        (f.name || "").toLowerCase().includes(q) ||
-        (f.username || "").toLowerCase().includes(q)
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.22, 20, 20),
+        new THREE.MeshStandardMaterial({ color: 0xc8ffff, emissive: 0x74eaff, emissiveIntensity: 2 })
       );
-
-      els.friendsList.innerHTML = list.map(f => `
-        <div class="item friend-item" data-username="${esc(f.username)}">
-          <div class="avatar">${esc(initials(f.name || f.username))}</div>
-          <div class="text">
-            <h4>${esc(f.name || f.username)}</h4>
-            <p>@${esc(f.username)}</p>
-          </div>
-        </div>
-      `).join("") || `<div class="empty" style="padding:22px">Henüz arkadaş yok.</div>`;
-
-      [...els.friendsList.querySelectorAll(".friend-item")].forEach(item => {
-        item.onclick = async () => {
-          await createOrOpenChat(item.dataset.username);
-        };
-      });
+      glow.position.set(0, 2.65, 1.18);
+      glow.userData = { kind: 'laserGlow' };
+      powerGroup.add(glow);
     }
 
-    async function createOrOpenChat(targetUsernameRaw){
-      if(!myProfile?.username) return alert("Önce profilini kaydet.");
-
-      const targetUsername = (targetUsernameRaw || "").trim().toLowerCase();
-      if(!targetUsername) return alert("Bir kullanıcı adı yaz.");
-      if(targetUsername === myProfile.username) return alert("Kendinle sohbet açamazsın.");
-
-      const uidSnap = await get(ref(db, `usernames/${targetUsername}`));
-      if(!uidSnap.exists()) return alert("Bu kullanıcı adı bulunamadı.");
-
-      const targetUid = uidSnap.val();
-      const targetProfileSnap = await get(ref(db, `profiles/${targetUid}`));
-      if(!targetProfileSnap.exists()) return alert("Profil bulunamadı.");
-
-      const targetProfile = targetProfileSnap.val();
-      const chatId = roomId(myProfile.username, targetUsername);
-      const metaRef = ref(db, `chats/${chatId}/meta`);
-      const metaSnap = await get(metaRef);
-
-      if(!metaSnap.exists()){
-        await set(metaRef, {
-          id: chatId,
-          members: {
-            [me.uid]: { uid: me.uid, username: myProfile.username, name: myProfile.name },
-            [targetUid]: { uid: targetUid, username: targetProfile.username, name: targetProfile.name }
-          },
-          usernames: [myProfile.username, targetProfile.username],
-          updatedAt: Date.now(),
-          lastMessage: "",
-          lastMessageAt: 0,
-          createdAt: Date.now()
-        });
-      }
-
-      await set(ref(db, `userChats/${me.uid}/${chatId}`), {
-        chatId,
-        peerUsername: targetProfile.username,
-        peerName: targetProfile.name,
-        updatedAt: Date.now()
-      });
-
-      await set(ref(db, `userChats/${targetUid}/${chatId}`), {
-        chatId,
-        peerUsername: myProfile.username,
-        peerName: myProfile.name,
-        updatedAt: Date.now()
-      });
-
-      await loadChats();
-      openChat(chatId, targetProfile);
-    }
-
-    async function loadChats(){
-      if(!me) return;
-      const snap = await get(ref(db, `userChats/${me.uid}`));
-      const data = snap.val() || {};
-
-      const entries = await Promise.all(
-        Object.values(data).map(async item => {
-          const metaSnap = await get(ref(db, `chats/${item.chatId}/meta`));
-          const meta = metaSnap.val() || {};
-          return {
-            chatId: item.chatId,
-            peerName: item.peerName,
-            peerUsername: item.peerUsername,
-            lastMessage: meta.lastMessage || "Sohbet başlatıldı",
-            lastMessageAt: meta.lastMessageAt || meta.updatedAt || 0
-          };
-        })
-      );
-
-      chatsCache = entries.sort((a,b) => (b.lastMessageAt || 0) - (a.lastMessageAt || 0));
-      renderChatList();
-    }
-
-    function renderChatList(){
-      const q = els.searchInput.value.trim().toLowerCase();
-      const list = chatsCache.filter(c =>
-        !q ||
-        (c.peerName || "").toLowerCase().includes(q) ||
-        (c.peerUsername || "").toLowerCase().includes(q) ||
-        (c.lastMessage || "").toLowerCase().includes(q)
-      );
-
-      els.chatList.innerHTML = list.map(c => `
-        <div class="item ${activeChatId===c.chatId ? "active" : ""}" data-chat="${c.chatId}" data-user="${c.peerUsername}">
-          <div class="avatar">${esc(initials(c.peerName || c.peerUsername))}</div>
-          <div class="text">
-            <h4>${esc(c.peerName || c.peerUsername)}</h4>
-            <p>@${esc(c.peerUsername || "")} · ${esc(c.lastMessage || "")}</p>
-          </div>
-          <div class="time">${formatListTime(c.lastMessageAt)}</div>
-        </div>
-      `).join("") || `<div class="empty" style="padding:22px">Henüz sohbet yok.</div>`;
-
-      [...els.chatList.querySelectorAll(".item")].forEach(item => {
-        item.onclick = async () => {
-          const peerUsername = item.dataset.user;
-          const uidSnap = await get(ref(db, `usernames/${peerUsername}`));
-          if(!uidSnap.exists()) return;
-
-          const profileSnap = await get(ref(db, `profiles/${uidSnap.val()}`));
-          if(!profileSnap.exists()) return;
-
-          openChat(item.dataset.chat, profileSnap.val());
-        };
-      });
-    }
-
-    function cleanupChatListeners(){
-      if(currentMessagesRef) off(currentMessagesRef);
-      if(currentTypingRef) off(currentTypingRef);
-      if(currentPresenceRef) off(currentPresenceRef);
-      if(currentChatMetaRef) off(currentChatMetaRef);
-      currentMessagesRef = null;
-      currentTypingRef = null;
-      currentPresenceRef = null;
-      currentChatMetaRef = null;
-      lastNotifiedMessageId = null;
-    }
-
-    function attachLongPressEvents(){
-      const ownMessages = els.messages.querySelectorAll(".msg.me[data-id]");
-      ownMessages.forEach(msgEl => {
-        const clearPress = () => clearTimeout(pressTimer);
-
-        msgEl.addEventListener("pointerdown", () => {
-          els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
-            if(el !== msgEl) el.classList.remove("show-delete");
-          });
-
-          pressTimer = setTimeout(() => {
-            msgEl.classList.add("show-delete");
-          }, 450);
-        });
-
-        msgEl.addEventListener("pointerup", clearPress);
-        msgEl.addEventListener("pointerleave", clearPress);
-        msgEl.addEventListener("pointercancel", clearPress);
-      });
-    }
-
-    async function deleteMessage(messageId){
-      if(!activeChatId || !messageId) return;
-      const ok = confirm("Bu mesaj silinsin mi?");
-      if(!ok) return;
-
-      try{
-        await remove(ref(db, `messages/${activeChatId}/${messageId}`));
-      }catch(e){
-        alert("Mesaj silinemedi.");
+    function spawnWater() {
+      clearPowers();
+      for (let i = 0; i < 18; i++) {
+        const drop = new THREE.Mesh(
+          new THREE.SphereGeometry(0.06 + Math.random() * 0.08, 12, 12),
+          new THREE.MeshStandardMaterial({ color: 0x57c7ff, emissive: 0x1f74ff, emissiveIntensity: 1.15, transparent: true, opacity: 0.82 })
+        );
+        drop.position.set((Math.random() - 0.5) * 0.45, 2.62 + (Math.random() - 0.5) * 0.3, 1 + Math.random() * 1.1);
+        drop.userData = { angle: Math.random() * Math.PI * 2, radius: 0.35 + Math.random() * 0.55, kind: 'water', y: drop.position.y };
+        powerGroup.add(drop);
       }
     }
 
-    window.deleteMessage = deleteMessage;
+    function setPower(type) {
+      currentPower = type;
+      powerText.textContent = powerNames[type];
+      document.querySelectorAll('.power-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.power === type);
+      });
+      if (type === 'fire') spawnFire();
+      if (type === 'laser') spawnLaser();
+      if (type === 'water') spawnWater();
+      showToast(powerNames[type] + ' seçildi');
+      playBeep(type === 'fire' ? 220 : type === 'laser' ? 440 : 330, 0.09);
+    }
 
-    function openChat(chatId, peerProfile){
-      cleanupChatListeners();
+    function toggleJacket() {
+      jacketOn = !jacketOn;
+      jacket.visible = jacketOn;
+      jacketText.textContent = jacketOn ? 'Açık' : 'Kapalı';
+      showToast(jacketOn ? 'Ceket giydirildi' : 'Ceket çıkarıldı');
+      playBeep(jacketOn ? 280 : 180, 0.08);
+    }
 
-      activeChatId = chatId;
-      activePeer = peerProfile;
+    function levelUp() {
+      level++;
+      levelText.textContent = String(level);
+      showToast('Seviye arttı: ' + level);
+      playBeep(520, 0.12);
+    }
 
-      renderChatList();
-      els.emptyChat.classList.add("hidden");
-      els.activeChatWrap.classList.remove("hidden");
-      els.chatAvatar.textContent = initials(peerProfile.name || peerProfile.username);
-      els.chatName.textContent = peerProfile.name || peerProfile.username;
-      els.chatSub.textContent = `@${peerProfile.username}`;
-      els.presenceBadge.textContent = "offline";
-      els.typingText.textContent = "";
-      els.messages.innerHTML = "";
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), 1400);
+    }
 
-      currentPresenceRef = ref(db, `presence/${peerProfile.uid}`);
-      onValue(currentPresenceRef, snap => {
-        const val = snap.val();
-        const online = !!val?.online;
-        els.presenceBadge.textContent = online ? "online" : "offline";
-        els.chatSub.textContent = online
-          ? `@${peerProfile.username} · çevrimiçi`
-          : `@${peerProfile.username}`;
+    function playBeep(freq = 260, duration = 0.1) {
+      if (!soundOn) return;
+      const audioCtx = playBeep.ctx || (playBeep.ctx = new (window.AudioContext || window.webkitAudioContext)());
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.value = freq;
+      gain.gain.value = 0.02;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    document.querySelectorAll('.power-item').forEach(item => {
+      item.addEventListener('click', () => setPower(item.dataset.power));
+    });
+
+    document.getElementById('jacketBtn').addEventListener('click', toggleJacket);
+    document.getElementById('upgradeBtn').addEventListener('click', levelUp);
+    document.getElementById('playBtn').addEventListener('click', () => {
+      showToast('Boss arena sonra bağlanacak');
+      playBeep(600, 0.12);
+    });
+    document.getElementById('shopBtn').addEventListener('click', () => showToast('Market sistemi sonraki adımda')); 
+    document.getElementById('skinBtn').addEventListener('click', () => showToast('Skin ekranı sonraki adımda')); 
+    document.getElementById('settingsBtn').addEventListener('click', () => showToast('Ayarlar sonra')); 
+    document.getElementById('fxBtn').addEventListener('click', () => {
+      setPower(currentPower);
+      showToast('Efekt testi');
+    });
+    document.getElementById('soundBtn').addEventListener('click', (e) => {
+      soundOn = !soundOn;
+      e.target.textContent = 'Ses: ' + (soundOn ? 'Açık' : 'Kapalı');
+      showToast(soundOn ? 'Ses açıldı' : 'Ses kapandı');
+    });
+
+    setPower('fire');
+
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      character.position.y = Math.sin(t * 1.6) * 0.08;
+      character.rotation.y = Math.sin(t * 0.8) * 0.25;
+      leftArm.rotation.z = 0.18 + Math.sin(t * 2) * 0.16;
+      rightArm.rotation.z = -0.18 - Math.sin(t * 2) * 0.16;
+      leftLeg.rotation.z = Math.sin(t * 2) * 0.05;
+      rightLeg.rotation.z = -Math.sin(t * 2) * 0.05;
+      pupil.position.x = Math.sin(t * 1.3) * 0.08;
+
+      arenaRing.rotation.z += 0.004;
+
+      cloudGroup.children.forEach(cloud => {
+        cloud.position.x += cloud.userData.speed;
+        if (cloud.position.x > 13) cloud.position.x = -13;
       });
 
-      currentTypingRef = ref(db, `chatTyping/${chatId}/${peerProfile.uid}`);
-      onValue(currentTypingRef, snap => {
-        els.typingText.textContent = snap.exists()
-          ? `${peerProfile.name || peerProfile.username} yazıyor...`
-          : "";
-      });
-
-      currentMessagesRef = query(
-        ref(db, `messages/${chatId}`),
-        orderByChild("createdAt"),
-        limitToLast(200)
-      );
-
-      onValue(currentMessagesRef, snap => {
-        const data = snap.val() || {};
-        const entries = Object.entries(data).sort((a,b) => ((a[1]?.createdAt)||0) - ((b[1]?.createdAt)||0));
-
-        els.messages.innerHTML = entries.map(([id, m]) => {
-          const isMe = m.senderUid === me.uid;
-          return `
-            <div class="msg-wrap ${isMe ? "me" : "other"}">
-              <div class="msg ${isMe ? "me" : "other"}" ${isMe ? `data-id="${id}"` : ""}>
-                ${!isMe ? `<div class="msg-name">${esc(m.senderName || "")}</div>` : ""}
-                <div>${esc(m.text || "")}</div>
-                <div class="msg-meta">${formatTime(m.createdAt)}</div>
-                ${isMe ? `<button class="delete-btn" onclick="deleteMessage('${id}')">Sil</button>` : ""}
-              </div>
-            </div>
-          `;
-        }).join("") || `<div class="empty" style="padding:28px">Henüz mesaj yok.</div>`;
-
-        attachLongPressEvents();
-        els.messages.scrollTop = els.messages.scrollHeight;
-
-        const lastEntry = entries[entries.length - 1];
-        if(lastEntry){
-          const [lastId, lastMsg] = lastEntry;
-          const isNew = lastNotifiedMessageId !== lastId;
-          const isFromOther = lastMsg.senderUid !== me.uid;
-          if(isNew && isFromOther && document.hidden){
-            sendBrowserNotification(activePeer?.name || "Yeni mesaj", lastMsg.text || "Yeni mesaj geldi");
-          }
-          lastNotifiedMessageId = lastId;
+      powerGroup.children.forEach((obj, i) => {
+        if (obj.userData.kind === 'fire') {
+          obj.position.z += obj.userData.speed;
+          obj.position.x += Math.sin(t * 5 + i) * 0.004;
+          if (obj.position.z > 4.6) obj.position.z = obj.userData.baseZ;
+        }
+        if (obj.userData.kind === 'laser') {
+          obj.scale.x = 1 + Math.sin(t * 18) * 0.05;
+          obj.scale.y = 1 + Math.sin(t * 18) * 0.08;
+        }
+        if (obj.userData.kind === 'laserGlow') {
+          obj.scale.setScalar(1 + Math.sin(t * 10) * 0.18);
+        }
+        if (obj.userData.kind === 'water') {
+          obj.position.x = Math.cos(t * 3 + obj.userData.angle) * obj.userData.radius * 0.7;
+          obj.position.y = obj.userData.y + Math.sin(t * 4 + obj.userData.angle) * 0.15;
+          obj.position.z = 1.4 + Math.sin(t * 3 + obj.userData.angle) * 0.6;
         }
       });
 
-      currentChatMetaRef = ref(db, `chats/${chatId}/meta`);
-      onValue(currentChatMetaRef, async () => {
-        await loadChats();
-      });
-
-      if(isMobile()) showMobileChat();
+      renderer.render(scene, camera);
     }
+    animate();
 
-    async function setTyping(){
-      if(!activeChatId || !me) return;
-      const tRef = ref(db, `chatTyping/${activeChatId}/${me.uid}`);
-      await set(tRef, { uid: me.uid, at: Date.now() });
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => remove(tRef), 1200);
-    }
-
-    async function sendMessage(){
-      const rawText = els.messageInput.value.trim();
-      const text = censorProfanity(rawText);
-      if(!text || !activeChatId || !myProfile) return;
-
-      const msg = {
-        senderUid: me.uid,
-        senderName: myProfile.name,
-        senderUsername: myProfile.username,
-        text,
-        createdAt: Date.now()
-      };
-
-      await push(ref(db, `messages/${activeChatId}`), msg);
-      await update(ref(db, `chats/${activeChatId}/meta`), {
-        lastMessage: text,
-        lastMessageAt: msg.createdAt,
-        updatedAt: msg.createdAt
-      });
-
-      els.messageInput.value = "";
-      autoGrow();
-      await remove(ref(db, `chatTyping/${activeChatId}/${me.uid}`));
-      await loadChats();
-    }
-
-    async function logOut(){
-      try{
-        await remove(ref(db, `presence/${me.uid}`));
-      }catch(e){}
-      await signOut(auth);
-      location.reload();
-    }
-
-    els.saveProfileBtn.onclick = async () => {
-      await requestNotificationPermission();
-      await saveProfile();
-    };
-
-    els.addFriendBtn.onclick = addFriend;
-    els.refreshBtn.onclick = async () => {
-      await loadFriends();
-      await loadChats();
-    };
-
-    els.showChatsBtn.onclick = () => setMode("chats");
-    els.showFriendsBtn.onclick = () => setMode("friends");
-
-    els.searchInput.oninput = () => {
-      if(showMode === "chats") renderChatList();
-      else renderFriendsList();
-    };
-
-    els.sendBtn.onclick = async () => {
-      await requestNotificationPermission();
-      await sendMessage();
-    };
-
-    els.logoutBtn.onclick = logOut;
-    els.mobileBackBtn.onclick = showMobileList;
-
-    els.messageInput.addEventListener("input", () => {
-      autoGrow();
-      setTyping();
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    els.messageInput.addEventListener("keydown", e => {
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    els.friendInput.addEventListener("keydown", e => {
-      if(e.key === "Enter") addFriend();
-    });
-
-    document.addEventListener("click", (e) => {
-      if(!e.target.closest(".msg.me")){
-        els.messages.querySelectorAll(".msg.show-delete").forEach(el => {
-          el.classList.remove("show-delete");
-        });
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      if(!isMobile()){
-        els.sidebar.classList.remove("mobile-hidden");
-        els.main.classList.remove("mobile-active");
-      }
-    });
-
-    (async function init(){
-      try{
-        await ensureAuth();
-        await loadMyProfile();
-        await savePresence();
-        await loadFriends();
-        await loadChats();
-        updateHeader();
-        await requestNotificationPermission();
-        setMode("chats");
-
-        if(isMobile()) showMobileList();
-      }catch(err){
-        console.error(err);
-        alert("Firebase bağlantısı kurulamadı. Anonymous Auth veya Realtime Database kapalı olabilir.");
-      }
-    })();
   </script>
 </body>
 </html>
