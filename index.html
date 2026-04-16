@@ -2,139 +2,160 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bad Lands - Starter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bad Lands - Arena Prototype</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background: #87ceeb; }
-    #app { position: relative; width: 100%; height: 100%; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background: #8fd1ff; touch-action: none; }
+    #app { position: relative; width: 100%; height: 100%; overflow: hidden; }
     #bg {
       position: absolute; inset: 0;
-      background: linear-gradient(180deg, #9ad8ff 0%, #c9ecff 35%, #dff5ff 55%, #a6d47a 56%, #7fb35c 100%);
+      background: linear-gradient(180deg, #8fd5ff 0%, #d5f1ff 42%, #97d17c 43%, #5ea24a 100%);
     }
     #scene { position: absolute; inset: 0; }
 
-    .hud {
-      position: absolute; inset: 0; pointer-events: none;
-      display: grid; grid-template-columns: 260px 1fr 280px;
-      padding: 20px;
-      gap: 20px;
+    .topbar {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.72);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      z-index: 5;
+      min-width: min(92vw, 900px);
+      justify-content: space-between;
     }
+    .title-wrap h1 { font-size: 28px; line-height: 1; }
+    .title-wrap p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+    .boss-info { text-align: right; }
+    .boss-info strong { font-size: 18px; display: block; }
+    .boss-info span { font-size: 12px; opacity: 0.8; }
 
-    .panel {
-      pointer-events: auto;
-      background: rgba(15, 23, 42, 0.74);
-      border: 1px solid rgba(255,255,255,0.15);
+    .left-panel {
+      position: absolute; left: 16px; top: 90px; width: 280px;
+      background: rgba(15, 23, 42, 0.76);
+      border: 1px solid rgba(255,255,255,0.12);
       backdrop-filter: blur(10px);
       color: white;
       border-radius: 24px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      padding: 16px;
+      z-index: 5;
     }
-
-    .left-panel {
-      padding: 18px;
-      align-self: center;
-    }
-
-    .left-panel h2, .right-panel h2 { font-size: 28px; margin-bottom: 16px; }
-    .power-item {
+    .left-panel h2 { font-size: 26px; margin-bottom: 12px; }
+    .power-item, .boss-item {
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.05);
       border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
       cursor: pointer;
-      transition: 0.2s ease;
-    }
-    .power-item:hover, .power-item.active {
-      transform: translateY(-2px);
-      border-color: rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.1);
-    }
-    .power-item h3 { font-size: 18px; margin-bottom: 6px; }
-    .power-item p { font-size: 13px; opacity: 0.85; }
-
-    .center-ui {
-      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-      padding: 20px 0;
-    }
-    .logo {
-      margin-top: 8px;
-      text-align: center;
-      color: white;
-      text-shadow: 0 6px 20px rgba(0,0,0,0.25);
-    }
-    .logo h1 { font-size: 64px; letter-spacing: 2px; }
-    .logo p { font-size: 18px; opacity: 0.9; }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-      pointer-events: auto;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .btn {
-      border: none;
-      background: rgba(255,255,255,0.92);
-      color: #0f172a;
-      padding: 14px 22px;
-      border-radius: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.15);
       transition: 0.18s ease;
     }
-    .btn:hover { transform: translateY(-2px) scale(1.02); }
-    .btn.primary { background: linear-gradient(135deg, #ff884d, #ff5d5d); color: white; }
+    .power-item:hover, .power-item.active, .boss-item:hover, .boss-item.active {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12);
+    }
+    .power-item h3, .boss-item h3 { font-size: 17px; margin-bottom: 5px; }
+    .power-item p, .boss-item p { font-size: 12px; opacity: 0.84; }
+    .section-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; margin: 12px 0 8px; }
 
     .right-panel {
-      padding: 18px;
-      align-self: center;
+      position: absolute; right: 16px; top: 90px; width: 280px;
+      background: rgba(15, 23, 42, 0.76);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      color: white;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      padding: 16px;
+      z-index: 5;
     }
+    .right-panel h2 { font-size: 26px; margin-bottom: 12px; }
     .stat {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
+      margin-bottom: 10px; padding: 10px 12px; border-radius: 14px;
       background: rgba(255,255,255,0.06);
     }
-    .mini-btns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
+    .mini-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .mini-btn, .main-btn {
+      padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-weight: 700;
     }
-    .mini-btn {
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      cursor: pointer;
+    .main-btn.primary { background: linear-gradient(135deg, #ff944d, #ff5e67); }
+
+    .center-bottom {
+      position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 7;
+    }
+    .main-actions {
+      display: flex; gap: 10px; padding: 10px; border-radius: 22px;
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
     }
 
+    .joystick-zone {
+      position: absolute; left: 24px; bottom: 18px; width: 170px; height: 170px;
+      border-radius: 50%; background: rgba(15,23,42,0.26); border: 1px solid rgba(255,255,255,0.16);
+      z-index: 6; touch-action: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .joystick-base {
+      width: 128px; height: 128px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      position: relative;
+    }
+    .joystick-knob {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff, #87d6ff);
+      position: absolute; left: 36px; top: 36px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    .crosshair {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 22px; height: 22px; z-index: 4; pointer-events: none;
+    }
+    .crosshair::before, .crosshair::after {
+      content: ''; position: absolute; background: rgba(255,255,255,0.95); border-radius: 999px;
+      box-shadow: 0 0 12px rgba(255,255,255,0.45);
+    }
+    .crosshair::before { width: 22px; height: 3px; left: 0; top: 9px; }
+    .crosshair::after { width: 3px; height: 22px; left: 9px; top: 0; }
+
+    .boss-health-wrap {
+      position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+      width: min(56vw, 520px); z-index: 5;
+    }
+    .boss-health-bg { width: 100%; height: 18px; border-radius: 999px; background: rgba(15,23,42,0.35); overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+    .boss-health-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff7e57, #ff4545); transition: width 0.2s linear; }
+
     .toast {
-      position: absolute;
-      left: 50%; bottom: 26px;
-      transform: translateX(-50%);
-      background: rgba(15,23,42,0.82);
-      color: white;
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-      opacity: 0;
-      transition: 0.25s ease;
-      pointer-events: none;
+      position: absolute; left: 50%; bottom: 94px; transform: translateX(-50%);
+      background: rgba(15,23,42,0.82); color: white; padding: 12px 18px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      opacity: 0; transition: 0.25s ease; pointer-events: none; z-index: 8;
     }
     .toast.show { opacity: 1; }
 
-    @media (max-width: 1100px) {
-      .hud { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
-      .left-panel, .right-panel { width: min(100%, 520px); justify-self: center; }
-      .logo h1 { font-size: 42px; }
+    .hit-btn {
+      width: 78px; height: 78px; border-radius: 50%; border: 0; cursor: pointer; font-size: 20px; font-weight: 800;
+      color: white; background: radial-gradient(circle at 30% 30%, #ffb380, #ff5d5d);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+    }
+
+    @media (max-width: 1180px) {
+      .left-panel, .right-panel { width: 240px; }
+      .topbar { min-width: min(95vw, 720px); }
+    }
+    @media (max-width: 900px) {
+      .left-panel { left: 10px; top: 74px; width: 220px; }
+      .right-panel { right: 10px; top: 74px; width: 220px; }
+      .title-wrap h1 { font-size: 22px; }
+      .boss-health-wrap { top: 70px; width: 54vw; }
     }
   </style>
 </head>
@@ -142,51 +163,74 @@
   <div id="app">
     <div id="bg"></div>
     <div id="scene"></div>
+    <div class="crosshair"></div>
 
-    <div class="hud">
-      <div class="panel left-panel">
-        <h2>Powers</h2>
-        <div class="power-item active" data-power="fire">
-          <h3>Alev Atışı</h3>
-          <p>Havalı ateş patlamaları. Başlangıç gücü.</p>
-        </div>
-        <div class="power-item" data-power="laser">
-          <h3>Göz Lazeri</h3>
-          <p>Tek gözden düz ve güçlü lazer vurur.</p>
-        </div>
-        <div class="power-item" data-power="water">
-          <h3>Su Atışı</h3>
-          <p>Seri ve akışkan vuruş efekti verir.</p>
-        </div>
+    <div class="topbar">
+      <div class="title-wrap">
+        <h1>BAD LANDS</h1>
+        <p>Yatay arena prototipi · Fortnite tarzı kamera</p>
+      </div>
+      <div class="boss-info">
+        <strong id="bossNameTop">Boss 1 · Cyclops Seed</strong>
+        <span id="difficultyTop">Kolay</span>
+      </div>
+    </div>
+
+    <div class="boss-health-wrap">
+      <div class="boss-health-bg"><div class="boss-health-fill" id="bossHealthFill"></div></div>
+    </div>
+
+    <div class="left-panel">
+      <h2>Powers</h2>
+      <div class="power-item active" data-power="fire">
+        <h3>Alev Atışı</h3>
+        <p>Başlangıç gücü. Tap yapınca kolay vurur.</p>
+      </div>
+      <div class="power-item" data-power="laser">
+        <h3>Göz Lazeri</h3>
+        <p>Düz çizgi yoğun hasar verir.</p>
+      </div>
+      <div class="power-item" data-power="water">
+        <h3>Su Atışı</h3>
+        <p>Seri vuruş ve daha akıcı efekt.</p>
       </div>
 
-      <div class="center-ui">
-        <div class="logo">
-          <h1>BAD LANDS</h1>
-          <p>Online boss fight başlangıç ekranı</p>
-        </div>
+      <div class="section-label">Bosses</div>
+      <div class="boss-item active" data-boss="0"><h3>1. Cyclops Seed</h3><p>Kolay · Tap ile rahat yenilir.</p></div>
+      <div class="boss-item" data-boss="1"><h3>2. Rock Jaw</h3><p>Orta-kolay · Biraz daha tank.</p></div>
+      <div class="boss-item" data-boss="2"><h3>3. Aqua Core</h3><p>Orta · Hareket eder.</p></div>
+      <div class="boss-item" data-boss="3"><h3>4. Inferno Mask</h3><p>Zor · Sert vuruşlar.</p></div>
+      <div class="boss-item" data-boss="4"><h3>5. Void Titan</h3><p>Çok zor · Büyük final boss.</p></div>
+    </div>
 
-        <div class="buttons">
-          <button class="btn primary" id="playBtn">Play</button>
-          <button class="btn" id="shopBtn">Shop</button>
-          <button class="btn" id="jacketBtn">Ceket</button>
-          <button class="btn" id="soundBtn">Ses: Açık</button>
-        </div>
+    <div class="right-panel">
+      <h2>Karakter</h2>
+      <div class="stat"><span>Seviye</span><strong id="levelText">1</strong></div>
+      <div class="stat"><span>Güç</span><strong id="powerText">Alev</strong></div>
+      <div class="stat"><span>Ceket</span><strong id="jacketText">Kapalı</strong></div>
+      <div class="stat"><span>Boss Can</span><strong id="bossHpText">100</strong></div>
+      <div class="stat"><span>Coin</span><strong id="coinText">250</strong></div>
+      <div class="mini-btns">
+        <button class="mini-btn" id="upgradeBtn">Upgrade</button>
+        <button class="mini-btn" id="jacketBtn">Ceket</button>
+        <button class="mini-btn" id="soundBtn">Ses: Açık</button>
+        <button class="mini-btn" id="fxBtn">FX Test</button>
       </div>
+    </div>
 
-      <div class="panel right-panel">
-        <h2>Karakter</h2>
-        <div class="stat"><span>Seviye</span><strong id="levelText">1</strong></div>
-        <div class="stat"><span>Güç</span><strong id="powerText">Alev</strong></div>
-        <div class="stat"><span>Ceket</span><strong id="jacketText">Kapalı</strong></div>
-        <div class="stat"><span>Coin</span><strong>250</strong></div>
-        <div class="mini-btns">
-          <button class="mini-btn" id="upgradeBtn">Upgrade</button>
-          <button class="mini-btn" id="skinBtn">Skin</button>
-          <button class="mini-btn" id="settingsBtn">Settings</button>
-          <button class="mini-btn" id="fxBtn">FX Test</button>
-        </div>
+    <div class="joystick-zone" id="joystickZone">
+      <div class="joystick-base">
+        <div class="joystick-knob" id="joystickKnob"></div>
       </div>
+    </div>
+
+    <div class="center-bottom">
+      <div class="main-actions">
+        <button class="main-btn primary" id="playBtn">Boss Başlat</button>
+        <button class="main-btn" id="shopBtn">Shop</button>
+        <button class="main-btn" id="switchCamBtn">Kamera</button>
+      </div>
+      <button class="hit-btn" id="tapAttackBtn">TAP</button>
     </div>
 
     <div class="toast" id="toast">Hazır</div>
@@ -195,23 +239,27 @@
   <script type="module">
     import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
-    const sceneWrap = document.getElementById('scene');
     const toast = document.getElementById('toast');
     const levelText = document.getElementById('levelText');
     const powerText = document.getElementById('powerText');
     const jacketText = document.getElementById('jacketText');
+    const bossHpText = document.getElementById('bossHpText');
+    const coinText = document.getElementById('coinText');
+    const bossHealthFill = document.getElementById('bossHealthFill');
+    const bossNameTop = document.getElementById('bossNameTop');
+    const difficultyTop = document.getElementById('difficultyTop');
+    const joystickKnob = document.getElementById('joystickKnob');
+    const joystickZone = document.getElementById('joystickZone');
 
-    let soundOn = true;
-    let jacketOn = false;
-    let currentPower = 'fire';
-    let level = 1;
+    const bosses = [
+      { name: 'Cyclops Seed', hp: 100, color: 0x82ff9e, diff: 'Kolay', size: 1.1, attack: 6 },
+      { name: 'Rock Jaw', hp: 180, color: 0xd8c29a, diff: 'Orta-Kolay', size: 1.35, attack: 8 },
+      { name: 'Aqua Core', hp: 280, color: 0x79d4ff, diff: 'Orta', size: 1.5, attack: 12 },
+      { name: 'Inferno Mask', hp: 420, color: 0xff8b5e, diff: 'Zor', size: 1.7, attack: 16 },
+      { name: 'Void Titan', hp: 700, color: 0xb28cff, diff: 'Çok Zor', size: 2.2, attack: 24 },
+    ];
 
-    const powerNames = {
-      fire: 'Alev',
-      laser: 'Lazer',
-      water: 'Su'
-    };
-
+    const sceneWrap = document.getElementById('scene');
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -219,46 +267,56 @@
     sceneWrap.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0xbfeaff, 18, 45);
+    scene.fog = new THREE.Fog(0xbfeaff, 20, 58);
 
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 4.5, 10);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 120);
+    const fortniteCam = { x: 0, y: 7.5, z: 10.5 };
+    const altCam = { x: 4.5, y: 8.2, z: 9.8 };
+    let useAltCam = false;
+    camera.position.set(fortniteCam.x, fortniteCam.y, fortniteCam.z);
 
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x7db15c, 1.2);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x77a64f, 1.15);
     scene.add(hemi);
-
-    const dir = new THREE.DirectionalLight(0xffffff, 1.15);
-    dir.position.set(6, 10, 5);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir.position.set(6, 11, 7);
     dir.castShadow = true;
     scene.add(dir);
 
     const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(18, 64),
-      new THREE.MeshStandardMaterial({ color: 0x75b65d, roughness: 0.95 })
+      new THREE.CircleGeometry(24, 72),
+      new THREE.MeshStandardMaterial({ color: 0x6cb653, roughness: 0.96 })
     );
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
+    const arenaDisk = new THREE.Mesh(
+      new THREE.CircleGeometry(7.2, 56),
+      new THREE.MeshStandardMaterial({ color: 0xc8e8ff, transparent: true, opacity: 0.28 })
+    );
+    arenaDisk.rotation.x = -Math.PI / 2;
+    arenaDisk.position.y = 0.03;
+    scene.add(arenaDisk);
+
     const arenaRing = new THREE.Mesh(
-      new THREE.TorusGeometry(5.2, 0.18, 18, 100),
-      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x88ccff, emissiveIntensity: 0.35 })
+      new THREE.TorusGeometry(7.2, 0.18, 16, 90),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x82d9ff, emissiveIntensity: 0.4 })
     );
     arenaRing.rotation.x = Math.PI / 2;
-    arenaRing.position.y = 0.05;
+    arenaRing.position.y = 0.08;
     scene.add(arenaRing);
 
     const cloudGroup = new THREE.Group();
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 10; i++) {
       const cloud = new THREE.Group();
-      const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+      const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.92 });
       for (let j = 0; j < 4; j++) {
-        const puff = new THREE.Mesh(new THREE.SphereGeometry(0.7 + Math.random() * 0.5, 20, 20), mat);
-        puff.position.set(j * 0.7, Math.random() * 0.2, Math.random() * 0.4);
+        const puff = new THREE.Mesh(new THREE.SphereGeometry(0.7 + Math.random() * 0.7, 18, 18), mat);
+        puff.position.set(j * 0.72, Math.random() * 0.18, Math.random() * 0.4);
         cloud.add(puff);
       }
-      cloud.position.set((Math.random() - 0.5) * 22, 6 + Math.random() * 3, -8 - Math.random() * 10);
-      cloud.userData.speed = 0.002 + Math.random() * 0.003;
+      cloud.position.set((Math.random() - 0.5) * 30, 7 + Math.random() * 4, -10 - Math.random() * 18);
+      cloud.userData.speed = 0.002 + Math.random() * 0.0024;
       cloudGroup.add(cloud);
     }
     scene.add(cloudGroup);
@@ -266,150 +324,231 @@
     const character = new THREE.Group();
     scene.add(character);
 
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe8eefc, roughness: 0.6 });
-    const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x4466ff, emissiveIntensity: 0.2 });
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xeaf1ff, roughness: 0.64 });
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x4466ff, emissiveIntensity: 0.25 });
     const blackMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-    const limbMat = new THREE.MeshStandardMaterial({ color: 0x2f3640, roughness: 0.8 });
-    const jacketMat = new THREE.MeshStandardMaterial({ color: 0x203a5f, roughness: 0.7 });
+    const limbMat = new THREE.MeshStandardMaterial({ color: 0x253040, roughness: 0.84 });
+    const jacketMat = new THREE.MeshStandardMaterial({ color: 0x1d3b63, roughness: 0.74 });
 
-    const body = new THREE.Mesh(new THREE.BoxGeometry(2.3, 3.6, 1.4), bodyMat);
-    body.position.y = 2.5;
-    body.castShadow = true;
-    character.add(body);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3.5, 1.4), bodyMat);
+    body.position.y = 2.45; body.castShadow = true; character.add(body);
+    const eye = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.34, 28), eyeMat);
+    eye.rotation.x = Math.PI / 2; eye.position.set(0, 2.58, 0.88); eye.castShadow = true; character.add(eye);
+    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.16, 22, 22), blackMat);
+    pupil.position.set(0, 2.58, 1.05); character.add(pupil);
+    const smile = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.05, 8, 30, Math.PI), blackMat);
+    smile.position.set(0, 1.74, 0.72); smile.rotation.z = Math.PI; character.add(smile);
 
-    const eye = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.72, 0.34, 32), eyeMat);
-    eye.rotation.x = Math.PI / 2;
-    eye.position.set(0, 2.65, 0.89);
-    eye.castShadow = true;
-    character.add(eye);
-
-    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 24), blackMat);
-    pupil.position.set(0, 2.65, 1.06);
-    character.add(pupil);
-
-    const smile = new THREE.Mesh(
-      new THREE.TorusGeometry(0.5, 0.05, 10, 40, Math.PI),
-      blackMat
-    );
-    smile.position.set(0, 1.8, 0.73);
-    smile.rotation.z = Math.PI;
-    character.add(smile);
-
-    function makeLimb(x, y, rot = 0) {
+    function makeLimb(x, y, rot) {
       const limb = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 1.6, 6, 14), limbMat);
-      limb.position.set(x, y, 0);
-      limb.rotation.z = rot;
-      limb.castShadow = true;
-      return limb;
+      limb.position.set(x, y, 0); limb.rotation.z = rot; limb.castShadow = true; return limb;
     }
-
-    const leftArm = makeLimb(-1.45, 2.25, 0.08);
-    const rightArm = makeLimb(1.45, 2.25, -0.08);
-    const leftLeg = makeLimb(-0.45, 0.75, 0.02);
-    const rightLeg = makeLimb(0.45, 0.75, -0.02);
+    const leftArm = makeLimb(-1.42, 2.16, 0.18);
+    const rightArm = makeLimb(1.42, 2.16, -0.18);
+    const leftLeg = makeLimb(-0.42, 0.72, 0.02);
+    const rightLeg = makeLimb(0.42, 0.72, -0.02);
     character.add(leftArm, rightArm, leftLeg, rightLeg);
 
     const jacket = new THREE.Group();
-    const jacketBody = new THREE.Mesh(new THREE.BoxGeometry(2.45, 2.55, 1.5), jacketMat);
-    jacketBody.position.set(0, 2.25, 0);
-    const stripeMat = new THREE.MeshStandardMaterial({ color: 0x79c2ff, emissive: 0x244bff, emissiveIntensity: 0.4 });
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.4, 1.52), stripeMat);
-    stripe.position.set(0, 2.25, 0.01);
+    const jacketBody = new THREE.Mesh(new THREE.BoxGeometry(2.35, 2.48, 1.5), jacketMat);
+    jacketBody.position.set(0, 2.18, 0);
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.34, 1.52), new THREE.MeshStandardMaterial({ color: 0x87d6ff, emissive: 0x376bff, emissiveIntensity: 0.45 }));
+    stripe.position.set(0, 2.18, 0.01);
     jacket.add(jacketBody, stripe);
     jacket.visible = false;
     character.add(jacket);
 
-    const powerGroup = new THREE.Group();
-    scene.add(powerGroup);
+    const bossRoot = new THREE.Group();
+    bossRoot.position.set(0, 0, -5.2);
+    scene.add(bossRoot);
 
-    function clearPowers() {
-      while (powerGroup.children.length) {
-        const child = powerGroup.children.pop();
+    let bossMesh = null;
+    function buildBoss(index) {
+      while (bossRoot.children.length) bossRoot.remove(bossRoot.children[0]);
+      const data = bosses[index];
+      const bossMat = new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.56, emissive: data.color, emissiveIntensity: 0.18 });
+      const eyeWhite = new THREE.MeshStandardMaterial({ color: 0xffffff });
+      const eyeBlack = new THREE.MeshStandardMaterial({ color: 0x111111 });
+      const g = new THREE.Group();
+      const head = new THREE.Mesh(new THREE.SphereGeometry(data.size, 30, 30), bossMat);
+      head.castShadow = true; head.position.y = 2.2; g.add(head);
+      const eyeBall = new THREE.Mesh(new THREE.SphereGeometry(data.size * 0.42, 20, 20), eyeWhite);
+      eyeBall.position.set(0, 2.3, data.size * 0.82); g.add(eyeBall);
+      const eyePupil = new THREE.Mesh(new THREE.SphereGeometry(data.size * 0.12, 16, 16), eyeBlack);
+      eyePupil.position.set(0, 2.3, data.size * 1.14); g.add(eyePupil);
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(data.size * 0.8, data.size * 1.0, data.size * 1.8, 20), bossMat);
+      body.position.y = 0.9; g.add(body);
+      for (let i = 0; i < 2; i++) {
+        const arm = new THREE.Mesh(new THREE.CapsuleGeometry(data.size * 0.13, data.size * 1.4, 6, 12), bossMat);
+        arm.position.set(i === 0 ? -data.size * 1.05 : data.size * 1.05, 1.1, 0);
+        arm.rotation.z = i === 0 ? 0.4 : -0.4;
+        g.add(arm);
+      }
+      bossRoot.add(g);
+      bossMesh = g;
+      bossNameTop.textContent = `Boss ${index + 1} · ${data.name}`;
+      difficultyTop.textContent = data.diff;
+    }
+
+    const projectileGroup = new THREE.Group();
+    scene.add(projectileGroup);
+    const fxGroup = new THREE.Group();
+    scene.add(fxGroup);
+
+    let soundOn = true;
+    let jacketOn = false;
+    let currentPower = 'fire';
+    let level = 1;
+    let coins = 250;
+    let activeBoss = 0;
+    let bossMaxHp = bosses[0].hp;
+    let bossHp = bossMaxHp;
+    let fightStarted = false;
+    let moveInput = { x: 0, y: 0 };
+
+    const powerNames = { fire: 'Alev', laser: 'Lazer', water: 'Su' };
+
+    function updateHud() {
+      levelText.textContent = String(level);
+      powerText.textContent = powerNames[currentPower];
+      jacketText.textContent = jacketOn ? 'Açık' : 'Kapalı';
+      bossHpText.textContent = String(Math.max(0, Math.floor(bossHp)));
+      coinText.textContent = String(coins);
+      bossHealthFill.style.width = `${Math.max(0, (bossHp / bossMaxHp) * 100)}%`;
+    }
+
+    function resetBoss(index = activeBoss) {
+      activeBoss = index;
+      bossMaxHp = bosses[index].hp;
+      bossHp = bossMaxHp;
+      buildBoss(index);
+      document.querySelectorAll('.boss-item').forEach((item, i) => item.classList.toggle('active', i === index));
+      updateHud();
+    }
+
+    function clearFxGroup(group) {
+      while (group.children.length) {
+        const child = group.children.pop();
         child.geometry?.dispose?.();
         if (Array.isArray(child.material)) child.material.forEach(m => m.dispose?.());
         else child.material?.dispose?.();
       }
     }
 
-    function spawnFire() {
-      clearPowers();
-      for (let i = 0; i < 14; i++) {
-        const orb = new THREE.Mesh(
-          new THREE.SphereGeometry(0.08 + Math.random() * 0.14, 16, 16),
-          new THREE.MeshStandardMaterial({ color: 0xff6a00, emissive: 0xff3300, emissiveIntensity: 1.5 })
-        );
-        orb.position.set((Math.random() - 0.5) * 0.35, 2.68 + (Math.random() - 0.5) * 0.25, 1.2 + Math.random() * 0.8);
-        orb.userData = { baseZ: orb.position.z, speed: 0.015 + Math.random() * 0.025, kind: 'fire' };
-        powerGroup.add(orb);
-      }
-    }
-
-    function spawnLaser() {
-      clearPowers();
-      const beam = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.1, 0.17, 4.8, 18),
-        new THREE.MeshStandardMaterial({ color: 0x7fe7ff, emissive: 0x29c7ff, emissiveIntensity: 2.2, transparent: true, opacity: 0.88 })
-      );
-      beam.rotation.x = Math.PI / 2;
-      beam.position.set(0, 2.65, 3.2);
-      beam.userData = { kind: 'laser' };
-      powerGroup.add(beam);
-
-      const glow = new THREE.Mesh(
-        new THREE.SphereGeometry(0.22, 20, 20),
-        new THREE.MeshStandardMaterial({ color: 0xc8ffff, emissive: 0x74eaff, emissiveIntensity: 2 })
-      );
-      glow.position.set(0, 2.65, 1.18);
-      glow.userData = { kind: 'laserGlow' };
-      powerGroup.add(glow);
-    }
-
-    function spawnWater() {
-      clearPowers();
-      for (let i = 0; i < 18; i++) {
-        const drop = new THREE.Mesh(
-          new THREE.SphereGeometry(0.06 + Math.random() * 0.08, 12, 12),
-          new THREE.MeshStandardMaterial({ color: 0x57c7ff, emissive: 0x1f74ff, emissiveIntensity: 1.15, transparent: true, opacity: 0.82 })
-        );
-        drop.position.set((Math.random() - 0.5) * 0.45, 2.62 + (Math.random() - 0.5) * 0.3, 1 + Math.random() * 1.1);
-        drop.userData = { angle: Math.random() * Math.PI * 2, radius: 0.35 + Math.random() * 0.55, kind: 'water', y: drop.position.y };
-        powerGroup.add(drop);
-      }
-    }
-
     function setPower(type) {
       currentPower = type;
-      powerText.textContent = powerNames[type];
-      document.querySelectorAll('.power-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.power === type);
-      });
-      if (type === 'fire') spawnFire();
-      if (type === 'laser') spawnLaser();
-      if (type === 'water') spawnWater();
+      document.querySelectorAll('.power-item').forEach(item => item.classList.toggle('active', item.dataset.power === type));
+      updateHud();
       showToast(powerNames[type] + ' seçildi');
-      playBeep(type === 'fire' ? 220 : type === 'laser' ? 440 : 330, 0.09);
+      playBeep(type === 'fire' ? 240 : type === 'laser' ? 420 : 320, 0.08);
     }
 
     function toggleJacket() {
       jacketOn = !jacketOn;
       jacket.visible = jacketOn;
-      jacketText.textContent = jacketOn ? 'Açık' : 'Kapalı';
+      updateHud();
       showToast(jacketOn ? 'Ceket giydirildi' : 'Ceket çıkarıldı');
-      playBeep(jacketOn ? 280 : 180, 0.08);
+      playBeep(jacketOn ? 280 : 180, 0.07);
     }
 
     function levelUp() {
       level++;
-      levelText.textContent = String(level);
       showToast('Seviye arttı: ' + level);
       playBeep(520, 0.12);
+      updateHud();
+    }
+
+    function spawnImpact(color) {
+      for (let i = 0; i < 10; i++) {
+        const p = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08 + Math.random() * 0.08, 10, 10),
+          new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.1 })
+        );
+        p.position.copy(bossRoot.position).add(new THREE.Vector3((Math.random()-0.5)*1.5, 2 + (Math.random()-0.5)*1, (Math.random()-0.5)*1.1));
+        p.userData = {
+          vx: (Math.random()-0.5) * 0.12,
+          vy: Math.random() * 0.1,
+          vz: (Math.random()-0.5) * 0.08,
+          life: 1
+        };
+        fxGroup.add(p);
+      }
+    }
+
+    function fireAttack() {
+      const projectile = new THREE.Mesh(
+        new THREE.SphereGeometry(0.16, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0xff6b1a, emissive: 0xff3b00, emissiveIntensity: 1.9 })
+      );
+      projectile.position.set(character.position.x, 2.65, character.position.z + 1.2);
+      projectile.userData = { type: 'fire', speed: 0.38, damage: 12 + level * 1.6 };
+      projectileGroup.add(projectile);
+    }
+
+    function laserAttack() {
+      const beam = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.12, 4.9, 18),
+        new THREE.MeshStandardMaterial({ color: 0x83f2ff, emissive: 0x28c7ff, emissiveIntensity: 2.3, transparent: true, opacity: 0.92 })
+      );
+      beam.rotation.x = Math.PI / 2;
+      beam.position.set(character.position.x, 2.6, character.position.z + 3.1);
+      beam.userData = { type: 'laser', ttl: 0.14, damage: 17 + level * 2.2 };
+      projectileGroup.add(beam);
+      bossHp -= beam.userData.damage;
+      spawnImpact(0x65e7ff);
+      playBeep(470, 0.05);
+    }
+
+    function waterAttack() {
+      for (let i = 0; i < 4; i++) {
+        const orb = new THREE.Mesh(
+          new THREE.SphereGeometry(0.11, 14, 14),
+          new THREE.MeshStandardMaterial({ color: 0x64caff, emissive: 0x266bff, emissiveIntensity: 1.35, transparent: true, opacity: 0.88 })
+        );
+        orb.position.set(character.position.x + (Math.random()-0.5)*0.18, 2.62 + (Math.random()-0.5)*0.14, character.position.z + 1.1);
+        orb.userData = { type: 'water', speed: 0.28 + Math.random()*0.05, damage: 6 + level * 1.2 };
+        projectileGroup.add(orb);
+      }
+    }
+
+    function attackCurrent() {
+      if (!fightStarted) { showToast('Önce Boss Başlat'); return; }
+      if (currentPower === 'fire') fireAttack();
+      if (currentPower === 'laser') laserAttack();
+      if (currentPower === 'water') waterAttack();
+      playBeep(currentPower === 'fire' ? 240 : currentPower === 'laser' ? 430 : 320, 0.05);
+      updateHud();
+      checkBossDefeat();
+    }
+
+    function checkBossDefeat() {
+      if (bossHp <= 0) {
+        bossHp = 0;
+        coins += 50 + activeBoss * 30;
+        showToast(bosses[activeBoss].name + ' yenildi');
+        playBeep(700, 0.2);
+        fightStarted = false;
+        if (activeBoss < bosses.length - 1) {
+          setTimeout(() => { resetBoss(activeBoss + 1); showToast('Sıradaki boss açıldı'); }, 900);
+        } else {
+          setTimeout(() => { resetBoss(0); showToast('Tüm bosslar bitti, tekrar başa'); }, 900);
+        }
+        updateHud();
+      }
+    }
+
+    function startFight() {
+      fightStarted = true;
+      bossHp = bossMaxHp;
+      showToast(bosses[activeBoss].name + ' savaşı başladı');
+      updateHud();
     }
 
     function showToast(text) {
       toast.textContent = text;
       toast.classList.add('show');
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => toast.classList.remove('show'), 1400);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), 1300);
     }
 
     function playBeep(freq = 260, duration = 0.1) {
@@ -420,77 +559,135 @@
       osc.type = 'sawtooth';
       osc.frequency.value = freq;
       gain.gain.value = 0.02;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      osc.connect(gain); gain.connect(audioCtx.destination);
       osc.start();
       gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    document.querySelectorAll('.power-item').forEach(item => {
-      item.addEventListener('click', () => setPower(item.dataset.power));
-    });
-
+    document.querySelectorAll('.power-item').forEach(item => item.addEventListener('click', () => setPower(item.dataset.power)));
+    document.querySelectorAll('.boss-item').forEach((item, i) => item.addEventListener('click', () => { resetBoss(i); showToast('Boss seçildi'); }));
     document.getElementById('jacketBtn').addEventListener('click', toggleJacket);
     document.getElementById('upgradeBtn').addEventListener('click', levelUp);
-    document.getElementById('playBtn').addEventListener('click', () => {
-      showToast('Boss arena sonra bağlanacak');
-      playBeep(600, 0.12);
+    document.getElementById('playBtn').addEventListener('click', startFight);
+    document.getElementById('shopBtn').addEventListener('click', () => showToast('Shop sonraki adımda genişleyecek'));
+    document.getElementById('fxBtn').addEventListener('click', attackCurrent);
+    document.getElementById('tapAttackBtn').addEventListener('click', attackCurrent);
+    document.getElementById('switchCamBtn').addEventListener('click', () => { useAltCam = !useAltCam; showToast(useAltCam ? 'Kamera değişti' : 'Fortnite kamera'); });
+    document.getElementById('soundBtn').addEventListener('click', (e) => { soundOn = !soundOn; e.target.textContent = 'Ses: ' + (soundOn ? 'Açık' : 'Kapalı'); showToast(soundOn ? 'Ses açıldı' : 'Ses kapandı'); });
+
+    let joyActive = false, joyCenter = { x: 0, y: 0 };
+    function setJoystick(clientX, clientY) {
+      const rect = joystickZone.getBoundingClientRect();
+      joyCenter.x = rect.left + rect.width / 2;
+      joyCenter.y = rect.top + rect.height / 2;
+      let dx = clientX - joyCenter.x;
+      let dy = clientY - joyCenter.y;
+      const max = 38;
+      const len = Math.hypot(dx, dy) || 1;
+      if (len > max) { dx = dx / len * max; dy = dy / len * max; }
+      joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+      moveInput.x = dx / max;
+      moveInput.y = dy / max;
+    }
+    function resetJoystick() {
+      joystickKnob.style.transform = 'translate(0px, 0px)';
+      moveInput.x = 0; moveInput.y = 0;
+    }
+    joystickZone.addEventListener('pointerdown', (e) => { joyActive = true; joystickZone.setPointerCapture(e.pointerId); setJoystick(e.clientX, e.clientY); });
+    joystickZone.addEventListener('pointermove', (e) => { if (joyActive) setJoystick(e.clientX, e.clientY); });
+    joystickZone.addEventListener('pointerup', () => { joyActive = false; resetJoystick(); });
+    joystickZone.addEventListener('pointercancel', () => { joyActive = false; resetJoystick(); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'w' || e.key === 'ArrowUp') moveInput.y = -1;
+      if (e.key === 's' || e.key === 'ArrowDown') moveInput.y = 1;
+      if (e.key === 'a' || e.key === 'ArrowLeft') moveInput.x = -1;
+      if (e.key === 'd' || e.key === 'ArrowRight') moveInput.x = 1;
+      if (e.key === ' ') attackCurrent();
     });
-    document.getElementById('shopBtn').addEventListener('click', () => showToast('Market sistemi sonraki adımda')); 
-    document.getElementById('skinBtn').addEventListener('click', () => showToast('Skin ekranı sonraki adımda')); 
-    document.getElementById('settingsBtn').addEventListener('click', () => showToast('Ayarlar sonra')); 
-    document.getElementById('fxBtn').addEventListener('click', () => {
-      setPower(currentPower);
-      showToast('Efekt testi');
-    });
-    document.getElementById('soundBtn').addEventListener('click', (e) => {
-      soundOn = !soundOn;
-      e.target.textContent = 'Ses: ' + (soundOn ? 'Açık' : 'Kapalı');
-      showToast(soundOn ? 'Ses açıldı' : 'Ses kapandı');
+    window.addEventListener('keyup', (e) => {
+      if (['w','ArrowUp','s','ArrowDown'].includes(e.key)) moveInput.y = 0;
+      if (['a','ArrowLeft','d','ArrowRight'].includes(e.key)) moveInput.x = 0;
     });
 
     setPower('fire');
+    resetBoss(0);
+    updateHud();
 
     const clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
+      const dt = Math.min(clock.getDelta(), 0.03);
 
-      character.position.y = Math.sin(t * 1.6) * 0.08;
-      character.rotation.y = Math.sin(t * 0.8) * 0.25;
-      leftArm.rotation.z = 0.18 + Math.sin(t * 2) * 0.16;
-      rightArm.rotation.z = -0.18 - Math.sin(t * 2) * 0.16;
-      leftLeg.rotation.z = Math.sin(t * 2) * 0.05;
-      rightLeg.rotation.z = -Math.sin(t * 2) * 0.05;
-      pupil.position.x = Math.sin(t * 1.3) * 0.08;
+      const speed = 3.4 * dt;
+      character.position.x += moveInput.x * speed;
+      character.position.z += moveInput.y * speed;
+      character.position.x = Math.max(-5.7, Math.min(5.7, character.position.x));
+      character.position.z = Math.max(-0.6, Math.min(5.8, character.position.z));
 
-      arenaRing.rotation.z += 0.004;
+      character.position.y = Math.sin(t * 3) * 0.04;
+      leftArm.rotation.z = 0.18 + Math.sin(t * 5) * 0.12 + moveInput.x * 0.18;
+      rightArm.rotation.z = -0.18 - Math.sin(t * 5) * 0.12 + moveInput.x * 0.18;
+      leftLeg.rotation.z = Math.sin(t * 5) * 0.08;
+      rightLeg.rotation.z = -Math.sin(t * 5) * 0.08;
+      pupil.position.x = Math.sin(t * 1.5) * 0.06;
+      character.rotation.y = THREE.MathUtils.lerp(character.rotation.y, moveInput.x * 0.35, 0.08);
+
+      if (bossMesh) {
+        bossMesh.position.y = Math.sin(t * 1.7) * 0.12;
+        bossMesh.rotation.y += 0.006 + activeBoss * 0.0015;
+      }
+
+      projectileGroup.children.forEach((obj) => {
+        if (obj.userData.type === 'fire' || obj.userData.type === 'water') {
+          obj.position.z -= obj.userData.speed;
+          if (Math.abs(obj.position.x - bossRoot.position.x) < 1.4 && Math.abs(obj.position.z - bossRoot.position.z) < 1.5) {
+            bossHp -= obj.userData.damage;
+            spawnImpact(obj.userData.type === 'fire' ? 0xff6a00 : 0x57c7ff);
+            obj.userData.hit = true;
+            updateHud();
+            checkBossDefeat();
+          }
+          if (obj.position.z < -6.2 || obj.userData.hit) obj.userData.dead = true;
+        }
+        if (obj.userData.type === 'laser') {
+          obj.userData.ttl -= dt;
+          obj.scale.x = 1 + Math.sin(t * 22) * 0.05;
+          obj.scale.y = 1 + Math.sin(t * 22) * 0.08;
+          if (obj.userData.ttl <= 0) obj.userData.dead = true;
+        }
+      });
+      for (let i = projectileGroup.children.length - 1; i >= 0; i--) {
+        if (projectileGroup.children[i].userData.dead) projectileGroup.remove(projectileGroup.children[i]);
+      }
+
+      fxGroup.children.forEach((p) => {
+        p.position.x += p.userData.vx;
+        p.position.y += p.userData.vy;
+        p.position.z += p.userData.vz;
+        p.userData.life -= 0.03;
+        p.scale.setScalar(Math.max(0.2, p.userData.life));
+        p.material.opacity = Math.max(0, p.userData.life);
+        p.material.transparent = true;
+        if (p.userData.life <= 0) p.userData.dead = true;
+      });
+      for (let i = fxGroup.children.length - 1; i >= 0; i--) {
+        if (fxGroup.children[i].userData.dead) fxGroup.remove(fxGroup.children[i]);
+      }
 
       cloudGroup.children.forEach(cloud => {
         cloud.position.x += cloud.userData.speed;
-        if (cloud.position.x > 13) cloud.position.x = -13;
+        if (cloud.position.x > 15) cloud.position.x = -15;
       });
+      arenaRing.rotation.z += 0.0035;
 
-      powerGroup.children.forEach((obj, i) => {
-        if (obj.userData.kind === 'fire') {
-          obj.position.z += obj.userData.speed;
-          obj.position.x += Math.sin(t * 5 + i) * 0.004;
-          if (obj.position.z > 4.6) obj.position.z = obj.userData.baseZ;
-        }
-        if (obj.userData.kind === 'laser') {
-          obj.scale.x = 1 + Math.sin(t * 18) * 0.05;
-          obj.scale.y = 1 + Math.sin(t * 18) * 0.08;
-        }
-        if (obj.userData.kind === 'laserGlow') {
-          obj.scale.setScalar(1 + Math.sin(t * 10) * 0.18);
-        }
-        if (obj.userData.kind === 'water') {
-          obj.position.x = Math.cos(t * 3 + obj.userData.angle) * obj.userData.radius * 0.7;
-          obj.position.y = obj.userData.y + Math.sin(t * 4 + obj.userData.angle) * 0.15;
-          obj.position.z = 1.4 + Math.sin(t * 3 + obj.userData.angle) * 0.6;
-        }
-      });
+      const camTarget = useAltCam ? altCam : fortniteCam;
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, character.position.x + camTarget.x * 0.15, 0.06);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, camTarget.y, 0.06);
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, character.position.z + camTarget.z, 0.06);
+      camera.lookAt(character.position.x, 2.3, character.position.z - 4.7);
 
       renderer.render(scene, camera);
     }
